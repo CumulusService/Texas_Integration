@@ -32,7 +32,7 @@
                                 "body": "@outputs('ComposeFileInput')",
                                 "host": {
                                     "connection": {
-                                        "referenceName": "onedriveforbusiness-5"
+                                        "referenceName": "onedriveforbusiness-6"
                                     }
                                 },
                                 "method": "post",
@@ -164,7 +164,7 @@
                 "inputs": {
                     "host": {
                         "connection": {
-                            "referenceName": "onedriveforbusiness-5"
+                            "referenceName": "onedriveforbusiness-1"
                         }
                     },
                     "method": "get",

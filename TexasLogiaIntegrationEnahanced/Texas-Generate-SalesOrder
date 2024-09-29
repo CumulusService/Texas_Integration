@@ -1,0 +1,2175 @@
+{
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "CheckMsgTyp": {
+                "cases": {
+                    "CancelOrder": {
+                        "actions": {
+                            "ChkErr1": {
+                                "actions": {
+                                    "Add_a_new_row__-Failure1": {
+                                        "inputs": {
+                                            "body": {
+                                                "cr65c_datenumber": "@formatDateTime(convertFromUtc(utcNow(), 'Romance Standard Time'), 'yyyyMMdd')",
+                                                "cr65c_documentnumber": "@{xpath(xml(outputs('BeautifyXML')), 'string(//*[local-name()=\"OrderNumber1\"])')}",
+                                                "cr65c_errordescription": "@{xpath(xml(body('DeletePickOrder')), 'string(normalize-space(//*[local-name()=\"ErrorText\" and namespace-uri()=\"http://schemas.datacontract.org/2004/07/Logimatic.Interface.Plugin.Models.Base\"]))')}",
+                                                "cr65c_integrationtype": 4,
+                                                "cr65c_message": "@{outputs('BeautifyXML')}",
+                                                "cr65c_movementtype": 2,
+                                                "cr65c_status": 2,
+                                                "cr65c_transactiontype": "161350001"
+                                            },
+                                            "headers": {
+                                                "organization": "https://orgaff016f0.crm.dynamics.com",
+                                                "prefer": "return=representation,odata.include-annotations=*"
+                                            },
+                                            "host": {
+                                                "connection": {
+                                                    "referenceName": "commondataservice-4"
+                                                }
+                                            },
+                                            "method": "post",
+                                            "path": "/api/data/v9.1/@{encodeURIComponent(encodeURIComponent('cr65c_integrationmonitors'))}"
+                                        },
+                                        "type": "ApiConnection"
+                                    }
+                                },
+                                "else": {
+                                    "actions": {
+                                        "CheckErrorOption1": {
+                                            "actions": {
+                                                "Add_a_new_row_-Failure11": {
+                                                    "inputs": {
+                                                        "body": {
+                                                            "cr65c_datenumber": "@formatDateTime(convertFromUtc(utcNow(), 'Romance Standard Time'), 'yyyyMMdd')",
+                                                            "cr65c_documentnumber": "@{xpath(xml(outputs('BeautifyXML')), 'string(//*[local-name()=\"OrderNumber1\"])')}",
+                                                            "cr65c_errordescription": "@{xpath(xml(body('DeletePickOrder')), 'string(normalize-space(//*[local-name()=\"ErrorText\" and namespace-uri()=\"http://schemas.datacontract.org/2004/07/Logimatic.Interface.Plugin.Models.Base\"]))')}",
+                                                            "cr65c_integrationtype": 4,
+                                                            "cr65c_message": "@{outputs('BeautifyXML')}",
+                                                            "cr65c_movementtype": 2,
+                                                            "cr65c_status": 2,
+                                                            "cr65c_transactiontype": "161350001"
+                                                        },
+                                                        "headers": {
+                                                            "organization": "https://orgaff016f0.crm.dynamics.com",
+                                                            "prefer": "return=representation,odata.include-annotations=*"
+                                                        },
+                                                        "host": {
+                                                            "connection": {
+                                                                "referenceName": "commondataservice-4"
+                                                            }
+                                                        },
+                                                        "method": "post",
+                                                        "path": "/api/data/v9.1/@{encodeURIComponent(encodeURIComponent('cr65c_integrationmonitors'))}"
+                                                    },
+                                                    "type": "ApiConnection"
+                                                }
+                                            },
+                                            "else": {
+                                                "actions": {
+                                                    "Add_a_new_row_-Success1": {
+                                                        "inputs": {
+                                                            "body": {
+                                                                "cr65c_datenumber": "@formatDateTime(convertFromUtc(utcNow(), 'Romance Standard Time'), 'yyyyMMdd')",
+                                                                "cr65c_documentnumber": "@{xpath(xml(outputs('BeautifyXML')), 'string(//*[local-name()=\"OrderNumber1\"])')}",
+                                                                "cr65c_integrationtype": 4,
+                                                                "cr65c_message": "@{outputs('BeautifyXML')}",
+                                                                "cr65c_movementtype": 2,
+                                                                "cr65c_status": 1,
+                                                                "cr65c_transactiontype": "161350001"
+                                                            },
+                                                            "headers": {
+                                                                "organization": "https://orgaff016f0.crm.dynamics.com",
+                                                                "prefer": "return=representation,odata.include-annotations=*"
+                                                            },
+                                                            "host": {
+                                                                "connection": {
+                                                                    "referenceName": "commondataservice-4"
+                                                                }
+                                                            },
+                                                            "method": "post",
+                                                            "path": "/api/data/v9.1/@{encodeURIComponent(encodeURIComponent('cr65c_integrationmonitors'))}"
+                                                        },
+                                                        "type": "ApiConnection"
+                                                    }
+                                                }
+                                            },
+                                            "expression": {
+                                                "and": [
+                                                    {
+                                                        "equals": [
+                                                            "@outputs('CheckErrorText1')",
+                                                            "@toLower('true')"
+                                                        ]
+                                                    }
+                                                ]
+                                            },
+                                            "runAfter": {
+                                                "CheckErrorText1": [
+                                                    "SUCCEEDED"
+                                                ]
+                                            },
+                                            "type": "If"
+                                        },
+                                        "CheckErrorText1": {
+                                            "inputs": "@xpath(xml(body('DeletePickOrder')), 'string(normalize-space(//*[local-name()=\"ErrorOccured\" and namespace-uri()=\"http://schemas.datacontract.org/2004/07/Logimatic.Interface.Plugin.Models.Base\"]))')",
+                                            "type": "Compose"
+                                        }
+                                    }
+                                },
+                                "expression": {
+                                    "and": [
+                                        {
+                                            "equals": [
+                                                "@outputs('DeletePickOrder')?['statusCode']",
+                                                500
+                                            ]
+                                        }
+                                    ]
+                                },
+                                "runAfter": {
+                                    "DeletePickOrder": [
+                                        "SUCCEEDED"
+                                    ]
+                                },
+                                "type": "If"
+                            },
+                            "DeletePickOrder": {
+                                "inputs": {
+                                    "body": "@outputs('BeautifyXML')",
+                                    "headers": {
+                                        "Content-Type": "text/xml; charset=utf-8",
+                                        "SOAPAction": "@{variables('Resource')}"
+                                    },
+                                    "method": "POST",
+                                    "retryPolicy": {
+                                        "count": 6,
+                                        "interval": "PT20S",
+                                        "type": "fixed"
+                                    },
+                                    "uri": "http://77.243.35.82:5324/LOGIAERPInterface/"
+                                },
+                                "runAfter": {
+                                    "SetCancelResource": [
+                                        "SUCCEEDED",
+                                        "TIMEDOUT",
+                                        "FAILED"
+                                    ]
+                                },
+                                "runtimeConfiguration": {
+                                    "contentTransfer": {
+                                        "transferMode": "Chunked"
+                                    }
+                                },
+                                "type": "Http"
+                            },
+                            "SetCancelResource": {
+                                "inputs": {
+                                    "name": "Resource",
+                                    "value": "http://www.logiawms.dk/IERP/DeletePickingOrder"
+                                },
+                                "type": "SetVariable"
+                            }
+                        },
+                        "case": "CancelOrder"
+                    },
+                    "CreateOrder": {
+                        "actions": {
+                            "ChkErr": {
+                                "actions": {
+                                    "Add_a_new_row__-Failure": {
+                                        "inputs": {
+                                            "body": {
+                                                "cr65c_datenumber": "@formatDateTime(convertFromUtc(utcNow(), 'Romance Standard Time'), 'yyyyMMdd')",
+                                                "cr65c_documentnumber": "@{xpath(xml(outputs('BeautifyXML')), 'string(//*[local-name()=\"OrderNumber1\"])')}",
+                                                "cr65c_errordescription": "@{xpath(xml(body('CreateSalesOrder4Logia')), 'string(normalize-space(//*[local-name()=\"ErrorText\" and namespace-uri()=\"http://schemas.datacontract.org/2004/07/Logimatic.Interface.Plugin.Models.Base\"]))')}",
+                                                "cr65c_integrationtype": 1,
+                                                "cr65c_message": "@{outputs('BeautifyXML')}",
+                                                "cr65c_movementtype": 2,
+                                                "cr65c_status": 2,
+                                                "cr65c_transactiontype": "161350001"
+                                            },
+                                            "headers": {
+                                                "organization": "https://orgaff016f0.crm.dynamics.com",
+                                                "prefer": "return=representation,odata.include-annotations=*"
+                                            },
+                                            "host": {
+                                                "connection": {
+                                                    "referenceName": "commondataservice-4"
+                                                }
+                                            },
+                                            "method": "post",
+                                            "path": "/api/data/v9.1/@{encodeURIComponent(encodeURIComponent('cr65c_integrationmonitors'))}"
+                                        },
+                                        "runAfter": {
+                                            "SetLogiaIndicatorFailure2": [
+                                                "SUCCEEDED"
+                                            ]
+                                        },
+                                        "type": "ApiConnection"
+                                    },
+                                    "SetLogiaIndicatorFailure2": {
+                                        "inputs": {
+                                            "body": {
+                                                "U_BITP_LogiaIndicator": "N",
+                                                "U_FlowIdent": "@{workflow()?['run']?['name']}",
+                                                "U_LogiaAction": "O",
+                                                "U_LogiaErrTxt": "@{xpath(xml(body('CreateSalesOrder4Logia')), 'string(normalize-space(//*[local-name()=\"ErrorText\" and namespace-uri()=\"http://schemas.datacontract.org/2004/07/Logimatic.Interface.Plugin.Models.Base\"]))')}",
+                                                "U_LogiaFreightStatus": "@{concat('Error: ',convertFromUtc(utcNow(),'Romance Standard Time'))}"
+                                            },
+                                            "cookie": "@body('GetCookie')",
+                                            "headers": {
+                                                "X-HTTP-Method-Override": "PATCH"
+                                            },
+                                            "method": "POST",
+                                            "retryPolicy": {
+                                                "count": 6,
+                                                "interval": "PT20S",
+                                                "type": "fixed"
+                                            },
+                                            "uri": "https://apsapb1sl.texas.dk:50000/b1s/v1/Orders(@{triggerOutputs()?['headers']?['OrderNum']})"
+                                        },
+                                        "runtimeConfiguration": {
+                                            "contentTransfer": {
+                                                "transferMode": "Chunked"
+                                            }
+                                        },
+                                        "type": "Http"
+                                    }
+                                },
+                                "else": {
+                                    "actions": {
+                                        "CheckErrorOption": {
+                                            "actions": {
+                                                "Add_a_new_row_-Failure_copy": {
+                                                    "inputs": {
+                                                        "body": {
+                                                            "cr65c_datenumber": "@formatDateTime(convertFromUtc(utcNow(), 'Romance Standard Time'), 'yyyyMMdd')",
+                                                            "cr65c_documentnumber": "@{xpath(xml(outputs('BeautifyXML')), 'string(//*[local-name()=\"OrderNumber1\"])')}",
+                                                            "cr65c_errordescription": "@{xpath(xml(body('CreateSalesOrder4Logia')), 'string(normalize-space(//*[local-name()=\"ErrorText\" and namespace-uri()=\"http://schemas.datacontract.org/2004/07/Logimatic.Interface.Plugin.Models.Base\"]))')}",
+                                                            "cr65c_integrationtype": 1,
+                                                            "cr65c_message": "@{outputs('BeautifyXML')}",
+                                                            "cr65c_movementtype": 2,
+                                                            "cr65c_status": 2,
+                                                            "cr65c_transactiontype": "161350001"
+                                                        },
+                                                        "headers": {
+                                                            "organization": "https://orgaff016f0.crm.dynamics.com",
+                                                            "prefer": "return=representation,odata.include-annotations=*"
+                                                        },
+                                                        "host": {
+                                                            "connection": {
+                                                                "referenceName": "commondataservice-4"
+                                                            }
+                                                        },
+                                                        "method": "post",
+                                                        "path": "/api/data/v9.1/@{encodeURIComponent(encodeURIComponent('cr65c_integrationmonitors'))}"
+                                                    },
+                                                    "runAfter": {
+                                                        "SetLogiaIndicatorFailure": [
+                                                            "SUCCEEDED"
+                                                        ]
+                                                    },
+                                                    "type": "ApiConnection"
+                                                },
+                                                "SetLogiaIndicatorFailure": {
+                                                    "inputs": {
+                                                        "body": {
+                                                            "U_BITP_LogiaIndicator": "N",
+                                                            "U_FlowIdent": "@{workflow()?['run']?['name']}",
+                                                            "U_LogiaAction": "O",
+                                                            "U_LogiaErrTxt": "@{xpath(xml(body('CreateSalesOrder4Logia')), 'string(normalize-space(//*[local-name()=\"ErrorText\" and namespace-uri()=\"http://schemas.datacontract.org/2004/07/Logimatic.Interface.Plugin.Models.Base\"]))')}",
+                                                            "U_LogiaFreightStatus": "@{concat('Error: ',convertFromUtc(utcNow(),'Romance Standard Time'))}"
+                                                        },
+                                                        "cookie": "@body('GetCookie')",
+                                                        "headers": {
+                                                            "X-HTTP-Method-Override": "PATCH"
+                                                        },
+                                                        "method": "POST",
+                                                        "retryPolicy": {
+                                                            "count": 6,
+                                                            "interval": "PT20S",
+                                                            "type": "fixed"
+                                                        },
+                                                        "uri": "https://apsapb1sl.texas.dk:50000/b1s/v1/Orders(@{triggerOutputs()?['headers']?['OrderNum']})"
+                                                    },
+                                                    "runtimeConfiguration": {
+                                                        "contentTransfer": {
+                                                            "transferMode": "Chunked"
+                                                        }
+                                                    },
+                                                    "type": "Http"
+                                                }
+                                            },
+                                            "else": {
+                                                "actions": {
+                                                    "Add_a_new_row_-Success": {
+                                                        "inputs": {
+                                                            "body": {
+                                                                "cr65c_datenumber": "@formatDateTime(convertFromUtc(utcNow(), 'Romance Standard Time'), 'yyyyMMdd')",
+                                                                "cr65c_documentnumber": "@{xpath(xml(outputs('BeautifyXML')), 'string(//*[local-name()=\"OrderNumber1\"])')}",
+                                                                "cr65c_integrationtype": 1,
+                                                                "cr65c_message": "@{outputs('BeautifyXML')}",
+                                                                "cr65c_movementtype": 2,
+                                                                "cr65c_status": 1,
+                                                                "cr65c_transactiontype": "161350001"
+                                                            },
+                                                            "headers": {
+                                                                "organization": "https://orgaff016f0.crm.dynamics.com",
+                                                                "prefer": "return=representation,odata.include-annotations=*"
+                                                            },
+                                                            "host": {
+                                                                "connection": {
+                                                                    "referenceName": "commondataservice-4"
+                                                                }
+                                                            },
+                                                            "method": "post",
+                                                            "path": "/api/data/v9.1/@{encodeURIComponent(encodeURIComponent('cr65c_integrationmonitors'))}"
+                                                        },
+                                                        "type": "ApiConnection"
+                                                    }
+                                                }
+                                            },
+                                            "expression": {
+                                                "or": [
+                                                    {
+                                                        "equals": [
+                                                            "@outputs('CheckErrorText')",
+                                                            "@toLower('true')"
+                                                        ]
+                                                    },
+                                                    {
+                                                        "equals": [
+                                                            "@result('Scope1')[0]['status']",
+                                                            "Failed"
+                                                        ]
+                                                    },
+                                                    {
+                                                        "equals": [
+                                                            "@result('Scope1')[0]['status']",
+                                                            "Aborted"
+                                                        ]
+                                                    }
+                                                ]
+                                            },
+                                            "runAfter": {
+                                                "Scope1": [
+                                                    "SUCCEEDED",
+                                                    "FAILED",
+                                                    "TIMEDOUT",
+                                                    "SKIPPED"
+                                                ]
+                                            },
+                                            "type": "If"
+                                        },
+                                        "Scope1": {
+                                            "actions": {
+                                                "CheckErrorText": {
+                                                    "inputs": "@xpath(xml(body('CreateSalesOrder4Logia')), 'string(normalize-space(//*[local-name()=\"ErrorOccured\" and namespace-uri()=\"http://schemas.datacontract.org/2004/07/Logimatic.Interface.Plugin.Models.Base\"]))')",
+                                                    "type": "Compose"
+                                                }
+                                            },
+                                            "type": "Scope"
+                                        }
+                                    }
+                                },
+                                "expression": {
+                                    "or": [
+                                        {
+                                            "equals": [
+                                                "@outputs('CreateSalesOrder4Logia')?['statusCode']",
+                                                500
+                                            ]
+                                        },
+                                        {
+                                            "equals": [
+                                                "@result('Scope')[0]['status']",
+                                                "Failed"
+                                            ]
+                                        },
+                                        {
+                                            "equals": [
+                                                "@result('Scope')[0]['status']",
+                                                "Aborted"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                "runAfter": {
+                                    "Scope": [
+                                        "SUCCEEDED",
+                                        "TIMEDOUT",
+                                        "FAILED",
+                                        "SKIPPED"
+                                    ]
+                                },
+                                "type": "If"
+                            },
+                            "Scope": {
+                                "actions": {
+                                    "CreateSalesOrder4Logia": {
+                                        "inputs": {
+                                            "body": "@outputs('BeautifyXML')",
+                                            "headers": {
+                                                "Content-Type": "text/xml; charset=utf-8",
+                                                "SOAPAction": "@{variables('Resource')}"
+                                            },
+                                            "method": "POST",
+                                            "retryPolicy": {
+                                                "count": 6,
+                                                "interval": "PT20S",
+                                                "type": "fixed"
+                                            },
+                                            "uri": "http://77.243.35.82:5324/LOGIAERPInterface/"
+                                        },
+                                        "runtimeConfiguration": {
+                                            "contentTransfer": {
+                                                "transferMode": "Chunked"
+                                            }
+                                        },
+                                        "type": "Http"
+                                    }
+                                },
+                                "runAfter": {
+                                    "SetOrdrResource": [
+                                        "SUCCEEDED"
+                                    ]
+                                },
+                                "type": "Scope"
+                            },
+                            "SetOrdrResource": {
+                                "inputs": {
+                                    "name": "Resource",
+                                    "value": "http://www.logiawms.dk/IERP/CreatePickingOrder"
+                                },
+                                "type": "SetVariable"
+                            }
+                        },
+                        "case": "CreateOrder"
+                    },
+                    "CreatePO": {
+                        "actions": {
+                            "ChkErr3": {
+                                "actions": {
+                                    "IsReturnTrue1": {
+                                        "actions": {
+                                            "Add_a_new_row__-Failure3_copy": {
+                                                "inputs": {
+                                                    "body": {
+                                                        "cr65c_datenumber": "@formatDateTime(convertFromUtc(utcNow(), 'Romance Standard Time'), 'yyyyMMdd')",
+                                                        "cr65c_documentnumber": "@{xpath(xml(outputs('BeautifyXML')), 'string(//*[local-name()=\"OrderNumber1\"])')}",
+                                                        "cr65c_errordescription": "@{xpath(xml(body('CreateStoringOrder')), 'string(normalize-space(//*[local-name()=\"ErrorText\" and namespace-uri()=\"http://schemas.datacontract.org/2004/07/Logimatic.Interface.Plugin.Models.Base\"]))')}",
+                                                        "cr65c_integrationtype": 3,
+                                                        "cr65c_message": "@{outputs('BeautifyXML')}",
+                                                        "cr65c_movementtype": 2,
+                                                        "cr65c_status": 2,
+                                                        "cr65c_transactiontype": "161350001"
+                                                    },
+                                                    "headers": {
+                                                        "organization": "https://orgaff016f0.crm.dynamics.com",
+                                                        "prefer": "return=representation,odata.include-annotations=*"
+                                                    },
+                                                    "host": {
+                                                        "connection": {
+                                                            "referenceName": "commondataservice-4"
+                                                        }
+                                                    },
+                                                    "method": "post",
+                                                    "path": "/api/data/v9.1/@{encodeURIComponent(encodeURIComponent('cr65c_integrationmonitors'))}"
+                                                },
+                                                "runAfter": {
+                                                    "SetLogiaIndicatorReturnFailure2": [
+                                                        "SUCCEEDED"
+                                                    ]
+                                                },
+                                                "type": "ApiConnection"
+                                            },
+                                            "SetLogiaIndicatorReturnFailure2": {
+                                                "inputs": {
+                                                    "body": {
+                                                        "U_BITP_LogiaIndicator": "N",
+                                                        "U_LogiaAction": "O",
+                                                        "U_LogiaErrTxt": "@{xpath(xml(body('CreateStoringOrder')), 'string(normalize-space(//*[local-name()=\"ErrorText\" and namespace-uri()=\"http://schemas.datacontract.org/2004/07/Logimatic.Interface.Plugin.Models.Base\"]))')}",
+                                                        "U_LogiaFreightStatus": "@{concat('Error: ',convertFromUtc(utcNow(),'Romance Standard Time'))}"
+                                                    },
+                                                    "cookie": "@body('GetCookie')",
+                                                    "headers": {
+                                                        "X-HTTP-Method-Override": "PATCH"
+                                                    },
+                                                    "method": "POST",
+                                                    "retryPolicy": {
+                                                        "count": 4,
+                                                        "interval": "PT30S",
+                                                        "type": "fixed"
+                                                    },
+                                                    "uri": "https://apsapb1sl.texas.dk:50000/b1s/v1/ReturnRequest(@{triggerOutputs()?['headers']?['OrderNum']})"
+                                                },
+                                                "runtimeConfiguration": {
+                                                    "contentTransfer": {
+                                                        "transferMode": "Chunked"
+                                                    }
+                                                },
+                                                "type": "Http"
+                                            }
+                                        },
+                                        "else": {
+                                            "actions": {
+                                                "Add_a_new_row__-Failure3": {
+                                                    "inputs": {
+                                                        "body": {
+                                                            "cr65c_datenumber": "@formatDateTime(convertFromUtc(utcNow(), 'Romance Standard Time'), 'yyyyMMdd')",
+                                                            "cr65c_documentnumber": "@{xpath(xml(outputs('BeautifyXML')), 'string(//*[local-name()=\"OrderNumber1\"])')}",
+                                                            "cr65c_errordescription": "@{xpath(xml(body('CreateStoringOrder')), 'string(normalize-space(//*[local-name()=\"ErrorText\" and namespace-uri()=\"http://schemas.datacontract.org/2004/07/Logimatic.Interface.Plugin.Models.Base\"]))')}",
+                                                            "cr65c_integrationtype": 2,
+                                                            "cr65c_message": "@{outputs('BeautifyXML')}",
+                                                            "cr65c_movementtype": 2,
+                                                            "cr65c_status": 2,
+                                                            "cr65c_transactiontype": "161350001"
+                                                        },
+                                                        "headers": {
+                                                            "organization": "https://orgaff016f0.crm.dynamics.com",
+                                                            "prefer": "return=representation,odata.include-annotations=*"
+                                                        },
+                                                        "host": {
+                                                            "connection": {
+                                                                "referenceName": "commondataservice-4"
+                                                            }
+                                                        },
+                                                        "method": "post",
+                                                        "path": "/api/data/v9.1/@{encodeURIComponent(encodeURIComponent('cr65c_integrationmonitors'))}"
+                                                    },
+                                                    "runAfter": {
+                                                        "SetLogiaIndicatorPOFailure2": [
+                                                            "SUCCEEDED"
+                                                        ]
+                                                    },
+                                                    "type": "ApiConnection"
+                                                },
+                                                "SetLogiaIndicatorPOFailure2": {
+                                                    "inputs": {
+                                                        "body": {
+                                                            "U_BITP_LogiaIndicator": "N",
+                                                            "U_LogiaAction": "O",
+                                                            "U_LogiaErrTxt": "@{xpath(xml(body('CreateStoringOrder')), 'string(normalize-space(//*[local-name()=\"ErrorText\" and namespace-uri()=\"http://schemas.datacontract.org/2004/07/Logimatic.Interface.Plugin.Models.Base\"]))')}",
+                                                            "U_LogiaFreightStatus": "@{concat('Error: ',convertFromUtc(utcNow(),'Romance Standard Time'))}"
+                                                        },
+                                                        "cookie": "@body('GetCookie')",
+                                                        "headers": {
+                                                            "Authorization": "Basic eyJVc2VyTmFtZSI6ICJCMUNVIiwiQ29tcGFueURCIjoiU2FuZGthc3NlMiJ9OkIxQ2xvdWRVc2VyQA==",
+                                                            "X-HTTP-Method-Override": "PATCH"
+                                                        },
+                                                        "method": "POST",
+                                                        "retryPolicy": {
+                                                            "count": 4,
+                                                            "interval": "PT30S",
+                                                            "type": "fixed"
+                                                        },
+                                                        "uri": "https://apsapb1sl.texas.dk:50000/b1s/v1/PurchaseOrders(@{triggerOutputs()?['headers']?['OrderNum']})"
+                                                    },
+                                                    "runtimeConfiguration": {
+                                                        "contentTransfer": {
+                                                            "transferMode": "Chunked"
+                                                        }
+                                                    },
+                                                    "type": "Http"
+                                                }
+                                            }
+                                        },
+                                        "expression": {
+                                            "and": [
+                                                {
+                                                    "equals": [
+                                                        "@triggerOutputs()?['headers']?['ReturnReq']",
+                                                        "Y"
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        "type": "If"
+                                    }
+                                },
+                                "else": {
+                                    "actions": {
+                                        "CheckErrorOption3": {
+                                            "actions": {
+                                                "IsReturnTrue": {
+                                                    "actions": {
+                                                        "Add_a_new_row__-Failure_3_copy": {
+                                                            "inputs": {
+                                                                "body": {
+                                                                    "cr65c_datenumber": "@formatDateTime(convertFromUtc(utcNow(), 'Romance Standard Time'), 'yyyyMMdd')",
+                                                                    "cr65c_documentnumber": "@{xpath(xml(outputs('BeautifyXML')), 'string(//*[local-name()=\"OrderNumber1\"])')}",
+                                                                    "cr65c_errordescription": "@{xpath(xml(body('CreateStoringOrder')), 'string(normalize-space(//*[local-name()=\"ErrorText\" and namespace-uri()=\"http://schemas.datacontract.org/2004/07/Logimatic.Interface.Plugin.Models.Base\"]))')}",
+                                                                    "cr65c_integrationtype": 3,
+                                                                    "cr65c_message": "@{outputs('BeautifyXML')}",
+                                                                    "cr65c_movementtype": 2,
+                                                                    "cr65c_status": 2,
+                                                                    "cr65c_transactiontype": "161350001"
+                                                                },
+                                                                "headers": {
+                                                                    "organization": "https://orgaff016f0.crm.dynamics.com",
+                                                                    "prefer": "return=representation,odata.include-annotations=*"
+                                                                },
+                                                                "host": {
+                                                                    "connection": {
+                                                                        "referenceName": "commondataservice-4"
+                                                                    }
+                                                                },
+                                                                "method": "post",
+                                                                "path": "/api/data/v9.1/@{encodeURIComponent(encodeURIComponent('cr65c_integrationmonitors'))}"
+                                                            },
+                                                            "runAfter": {
+                                                                "SetLogiaIndicatorReturnFailure1": [
+                                                                    "SUCCEEDED"
+                                                                ]
+                                                            },
+                                                            "type": "ApiConnection"
+                                                        },
+                                                        "SetLogiaIndicatorReturnFailure1": {
+                                                            "inputs": {
+                                                                "body": {
+                                                                    "U_BITP_LogiaIndicator": "N",
+                                                                    "U_LogiaAction": "O",
+                                                                    "U_LogiaErrTxt": "@{xpath(xml(body('CreateStoringOrder')), 'string(normalize-space(//*[local-name()=\"ErrorText\" and namespace-uri()=\"http://schemas.datacontract.org/2004/07/Logimatic.Interface.Plugin.Models.Base\"]))')}",
+                                                                    "U_LogiaFreightStatus": "@{concat('Error: ',convertFromUtc(utcNow(),'Romance Standard Time'))}"
+                                                                },
+                                                                "cookie": "@body('GetCookie')",
+                                                                "headers": {
+                                                                    "X-HTTP-Method-Override": "PATCH"
+                                                                },
+                                                                "method": "POST",
+                                                                "retryPolicy": {
+                                                                    "count": 4,
+                                                                    "interval": "PT30S",
+                                                                    "type": "fixed"
+                                                                },
+                                                                "uri": "https://apsapb1sl.texas.dk:50000/b1s/v1/ReturnRequest(@{triggerOutputs()?['headers']?['OrderNum']})"
+                                                            },
+                                                            "runtimeConfiguration": {
+                                                                "contentTransfer": {
+                                                                    "transferMode": "Chunked"
+                                                                }
+                                                            },
+                                                            "type": "Http"
+                                                        }
+                                                    },
+                                                    "else": {
+                                                        "actions": {
+                                                            "Add_a_new_row__-Failure_3": {
+                                                                "inputs": {
+                                                                    "body": {
+                                                                        "cr65c_datenumber": "@formatDateTime(convertFromUtc(utcNow(), 'Romance Standard Time'), 'yyyyMMdd')",
+                                                                        "cr65c_documentnumber": "@{xpath(xml(outputs('BeautifyXML')), 'string(//*[local-name()=\"OrderNumber1\"])')}",
+                                                                        "cr65c_errordescription": "@{xpath(xml(body('CreateStoringOrder')), 'string(normalize-space(//*[local-name()=\"ErrorText\" and namespace-uri()=\"http://schemas.datacontract.org/2004/07/Logimatic.Interface.Plugin.Models.Base\"]))')}",
+                                                                        "cr65c_integrationtype": 2,
+                                                                        "cr65c_message": "@{outputs('BeautifyXML')}",
+                                                                        "cr65c_movementtype": 2,
+                                                                        "cr65c_status": 2,
+                                                                        "cr65c_transactiontype": "161350001"
+                                                                    },
+                                                                    "headers": {
+                                                                        "organization": "https://orgaff016f0.crm.dynamics.com",
+                                                                        "prefer": "return=representation,odata.include-annotations=*"
+                                                                    },
+                                                                    "host": {
+                                                                        "connection": {
+                                                                            "referenceName": "commondataservice-4"
+                                                                        }
+                                                                    },
+                                                                    "method": "post",
+                                                                    "path": "/api/data/v9.1/@{encodeURIComponent(encodeURIComponent('cr65c_integrationmonitors'))}"
+                                                                },
+                                                                "runAfter": {
+                                                                    "SetLogiaIndicatorPOFailure1": [
+                                                                        "SUCCEEDED"
+                                                                    ]
+                                                                },
+                                                                "type": "ApiConnection"
+                                                            },
+                                                            "SetLogiaIndicatorPOFailure1": {
+                                                                "inputs": {
+                                                                    "body": {
+                                                                        "U_BITP_LogiaIndicator": "N",
+                                                                        "U_LogiaAction": "O",
+                                                                        "U_LogiaErrTxt": "@{xpath(xml(body('CreateStoringOrder')), 'string(normalize-space(//*[local-name()=\"ErrorText\" and namespace-uri()=\"http://schemas.datacontract.org/2004/07/Logimatic.Interface.Plugin.Models.Base\"]))')}",
+                                                                        "U_LogiaFreightStatus": "@{concat('Error: ',convertFromUtc(utcNow(),'Romance Standard Time'))}"
+                                                                    },
+                                                                    "cookie": "@body('GetCookie')",
+                                                                    "headers": {
+                                                                        "X-HTTP-Method-Override": "PATCH"
+                                                                    },
+                                                                    "method": "POST",
+                                                                    "retryPolicy": {
+                                                                        "count": 4,
+                                                                        "interval": "PT30S",
+                                                                        "type": "fixed"
+                                                                    },
+                                                                    "uri": "https://apsapb1sl.texas.dk:50000/b1s/v1/PurchaseOrders(@{triggerOutputs()?['headers']?['OrderNum']})"
+                                                                },
+                                                                "runtimeConfiguration": {
+                                                                    "contentTransfer": {
+                                                                        "transferMode": "Chunked"
+                                                                    }
+                                                                },
+                                                                "type": "Http"
+                                                            }
+                                                        }
+                                                    },
+                                                    "expression": {
+                                                        "and": [
+                                                            {
+                                                                "equals": [
+                                                                    "@triggerOutputs()?['headers']?['ReturnReq']",
+                                                                    "Y"
+                                                                ]
+                                                            }
+                                                        ]
+                                                    },
+                                                    "type": "If"
+                                                }
+                                            },
+                                            "else": {
+                                                "actions": {
+                                                    "IsReturnFalse": {
+                                                        "actions": {
+                                                            "Add_a_new_row_-Success3_copy": {
+                                                                "inputs": {
+                                                                    "body": {
+                                                                        "cr65c_datenumber": "@formatDateTime(convertFromUtc(utcNow(), 'Romance Standard Time'), 'yyyyMMdd')",
+                                                                        "cr65c_documentnumber": "@{xpath(xml(outputs('BeautifyXML')), 'string(//*[local-name()=\"OrderNumber1\"])')}",
+                                                                        "cr65c_integrationtype": 3,
+                                                                        "cr65c_message": "@{outputs('BeautifyXML')}",
+                                                                        "cr65c_movementtype": 2,
+                                                                        "cr65c_status": 1,
+                                                                        "cr65c_transactiontype": "161350001"
+                                                                    },
+                                                                    "headers": {
+                                                                        "organization": "https://orgaff016f0.crm.dynamics.com",
+                                                                        "prefer": "return=representation,odata.include-annotations=*"
+                                                                    },
+                                                                    "host": {
+                                                                        "connection": {
+                                                                            "referenceName": "commondataservice-4"
+                                                                        }
+                                                                    },
+                                                                    "method": "post",
+                                                                    "path": "/api/data/v9.1/@{encodeURIComponent(encodeURIComponent('cr65c_integrationmonitors'))}"
+                                                                },
+                                                                "runAfter": {
+                                                                    "SetLogiaIndicatorReturnSuccess": [
+                                                                        "SUCCEEDED"
+                                                                    ]
+                                                                },
+                                                                "type": "ApiConnection"
+                                                            },
+                                                            "SetLogiaIndicatorReturnSuccess": {
+                                                                "inputs": {
+                                                                    "body": {
+                                                                        "U_BITP_LogiaIndicator": "S",
+                                                                        "U_LogiaAction": "O",
+                                                                        "U_LogiaErrTxt": "",
+                                                                        "U_LogiaFreightStatus": "@{concat('OK: ',convertFromUtc(utcNow(),'Romance Standard Time'))}"
+                                                                    },
+                                                                    "cookie": "@body('GetCookie')",
+                                                                    "headers": {
+                                                                        "X-HTTP-Method-Override": "PATCH"
+                                                                    },
+                                                                    "method": "POST",
+                                                                    "retryPolicy": {
+                                                                        "count": 4,
+                                                                        "interval": "PT30S",
+                                                                        "type": "fixed"
+                                                                    },
+                                                                    "uri": "https://apsapb1sl.texas.dk:50000/b1s/v1/ReturnRequest(@{triggerOutputs()?['headers']?['OrderNum']})"
+                                                                },
+                                                                "runtimeConfiguration": {
+                                                                    "contentTransfer": {
+                                                                        "transferMode": "Chunked"
+                                                                    }
+                                                                },
+                                                                "type": "Http"
+                                                            }
+                                                        },
+                                                        "else": {
+                                                            "actions": {
+                                                                "Add_a_new_row_-Success3": {
+                                                                    "inputs": {
+                                                                        "body": {
+                                                                            "cr65c_datenumber": "@formatDateTime(convertFromUtc(utcNow(), 'Romance Standard Time'), 'yyyyMMdd')",
+                                                                            "cr65c_documentnumber": "@{xpath(xml(outputs('BeautifyXML')), 'string(//*[local-name()=\"OrderNumber1\"])')}",
+                                                                            "cr65c_integrationtype": 2,
+                                                                            "cr65c_message": "@{outputs('BeautifyXML')}",
+                                                                            "cr65c_movementtype": 2,
+                                                                            "cr65c_status": 1,
+                                                                            "cr65c_transactiontype": "161350001"
+                                                                        },
+                                                                        "headers": {
+                                                                            "organization": "https://orgaff016f0.crm.dynamics.com",
+                                                                            "prefer": "return=representation,odata.include-annotations=*"
+                                                                        },
+                                                                        "host": {
+                                                                            "connection": {
+                                                                                "referenceName": "commondataservice-4"
+                                                                            }
+                                                                        },
+                                                                        "method": "post",
+                                                                        "path": "/api/data/v9.1/@{encodeURIComponent(encodeURIComponent('cr65c_integrationmonitors'))}"
+                                                                    },
+                                                                    "runAfter": {
+                                                                        "SetLogiaIndicatorPOSuccess": [
+                                                                            "SUCCEEDED"
+                                                                        ]
+                                                                    },
+                                                                    "type": "ApiConnection"
+                                                                },
+                                                                "SetLogiaIndicatorPOSuccess": {
+                                                                    "inputs": {
+                                                                        "body": {
+                                                                            "U_BITP_LogiaIndicator": "S",
+                                                                            "U_LogiaAction": "O",
+                                                                            "U_LogiaErrTxt": "",
+                                                                            "U_LogiaFreightStatus": "@{concat('OK: ',convertFromUtc(utcNow(),'Romance Standard Time'))}"
+                                                                        },
+                                                                        "cookie": "@body('GetCookie')",
+                                                                        "headers": {
+                                                                            "X-HTTP-Method-Override": "PATCH"
+                                                                        },
+                                                                        "method": "POST",
+                                                                        "retryPolicy": {
+                                                                            "count": 4,
+                                                                            "interval": "PT30S",
+                                                                            "type": "fixed"
+                                                                        },
+                                                                        "uri": "https://apsapb1sl.texas.dk:50000/b1s/v1/PurchaseOrders(@{triggerOutputs()?['headers']?['OrderNum']})"
+                                                                    },
+                                                                    "runtimeConfiguration": {
+                                                                        "contentTransfer": {
+                                                                            "transferMode": "Chunked"
+                                                                        }
+                                                                    },
+                                                                    "type": "Http"
+                                                                }
+                                                            }
+                                                        },
+                                                        "expression": {
+                                                            "and": [
+                                                                {
+                                                                    "equals": [
+                                                                        "@triggerOutputs()?['headers']?['ReturnReq']",
+                                                                        "Y"
+                                                                    ]
+                                                                }
+                                                            ]
+                                                        },
+                                                        "type": "If"
+                                                    }
+                                                }
+                                            },
+                                            "expression": {
+                                                "and": [
+                                                    {
+                                                        "equals": [
+                                                            "@outputs('CheckErrorText3')",
+                                                            "@toLower('true')"
+                                                        ]
+                                                    }
+                                                ]
+                                            },
+                                            "runAfter": {
+                                                "CheckErrorText3": [
+                                                    "SUCCEEDED"
+                                                ]
+                                            },
+                                            "type": "If"
+                                        },
+                                        "CheckErrorText3": {
+                                            "inputs": "@xpath(xml(body('CreateStoringOrder')), 'string(normalize-space(//*[local-name()=\"ErrorOccured\" and namespace-uri()=\"http://schemas.datacontract.org/2004/07/Logimatic.Interface.Plugin.Models.Base\"]))')",
+                                            "type": "Compose"
+                                        }
+                                    }
+                                },
+                                "expression": {
+                                    "and": [
+                                        {
+                                            "equals": [
+                                                "@outputs('CreateStoringOrder')?['statusCode']",
+                                                500
+                                            ]
+                                        }
+                                    ]
+                                },
+                                "runAfter": {
+                                    "CreateStoringOrder": [
+                                        "SUCCEEDED"
+                                    ]
+                                },
+                                "type": "If"
+                            },
+                            "CreateStoringOrder": {
+                                "inputs": {
+                                    "body": "@outputs('BeautifyXML')",
+                                    "headers": {
+                                        "Content-Type": "text/xml; charset=utf-8",
+                                        "SOAPAction": "@{variables('Resource')}"
+                                    },
+                                    "method": "POST",
+                                    "retryPolicy": {
+                                        "count": 6,
+                                        "interval": "PT20S",
+                                        "type": "fixed"
+                                    },
+                                    "uri": "http://77.243.35.82:5324/LOGIAERPInterface/"
+                                },
+                                "runAfter": {
+                                    "Set_variable": [
+                                        "SUCCEEDED",
+                                        "FAILED",
+                                        "TIMEDOUT"
+                                    ]
+                                },
+                                "runtimeConfiguration": {
+                                    "contentTransfer": {
+                                        "transferMode": "Chunked"
+                                    }
+                                },
+                                "type": "Http"
+                            },
+                            "Set_variable": {
+                                "inputs": {
+                                    "name": "Resource",
+                                    "value": "http://www.logiawms.dk/IERP/CreateStoringOrder"
+                                },
+                                "type": "SetVariable"
+                            }
+                        },
+                        "case": "CreatePO"
+                    },
+                    "FreightEstimateResponse": {
+                        "actions": {
+                            "CheckErr": {
+                                "actions": {
+                                    "FormXML": {
+                                        "inputs": "@xml(outputs('StructureRetInput'))",
+                                        "runAfter": {
+                                            "StructureRetInput": [
+                                                "SUCCEEDED"
+                                            ]
+                                        },
+                                        "type": "Compose"
+                                    },
+                                    "RetrievePickOrderFreight": {
+                                        "inputs": {
+                                            "body": "@outputs('FormXML')",
+                                            "headers": {
+                                                "Content-Type": "text/xml; charset=utf-8",
+                                                "SOAPAction": "@{variables('Resource')}"
+                                            },
+                                            "method": "POST",
+                                            "retryPolicy": {
+                                                "count": 6,
+                                                "interval": "PT20S",
+                                                "type": "fixed"
+                                            },
+                                            "uri": "http://77.243.35.82:5324/LOGIAERPInterface/"
+                                        },
+                                        "runAfter": {
+                                            "FormXML": [
+                                                "SUCCEEDED"
+                                            ]
+                                        },
+                                        "runtimeConfiguration": {
+                                            "contentTransfer": {
+                                                "transferMode": "Chunked"
+                                            }
+                                        },
+                                        "type": "Http"
+                                    },
+                                    "SetRetrieveOrderFreight": {
+                                        "inputs": {
+                                            "name": "Resource",
+                                            "value": "http://www.logiawms.dk/IERP/DeletePickingOrder"
+                                        },
+                                        "type": "SetVariable"
+                                    },
+                                    "SetStatusForFreight": {
+                                        "inputs": {
+                                            "body": "\n  @{triggerBody()}\n  \"U_FlowIdent\": \"@{workflow()?['run']?['name']}\"",
+                                            "cookie": "@body('GetCookie')",
+                                            "headers": {
+                                                "X-HTTP-Method-Override": "PATCH"
+                                            },
+                                            "method": "POST",
+                                            "retryPolicy": {
+                                                "count": 6,
+                                                "interval": "PT20S",
+                                                "type": "fixed"
+                                            },
+                                            "uri": "https://apsapb1sl.texas.dk:50000/b1s/v1/Orders(@{triggerOutputs()?['headers']?['OrderDocEntry']})"
+                                        },
+                                        "runAfter": {
+                                            "RetrievePickOrderFreight": [
+                                                "SUCCEEDED"
+                                            ]
+                                        },
+                                        "runtimeConfiguration": {
+                                            "contentTransfer": {
+                                                "transferMode": "Chunked"
+                                            }
+                                        },
+                                        "type": "Http"
+                                    },
+                                    "StructureRetInput": {
+                                        "inputs": "<soapenv:Envelope xmlns:log1=\"http://schemas.datacontract.org/2004/07/Logimatic.Interface.Plugin.Models.ERP\" xmlns:log=\"http://www.logiawms.dk/\" xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n\t<soapenv:Header/>\n\t<soapenv:Body>\n\t\t<log:DeletePickingOrder>\n\t\t\t<log:pickingOrderKey>\n\t\t\t\t<log1:OrderNumber1>@{triggerOutputs()?['headers']?['DocNum']}</log1:OrderNumber1>                                                \n\t\t\t</log:pickingOrderKey>\n\t\t</log:DeletePickingOrder>\n\t</soapenv:Body>\n</soapenv:Envelope>",
+                                        "runAfter": {
+                                            "SetRetrieveOrderFreight": [
+                                                "SUCCEEDED"
+                                            ]
+                                        },
+                                        "type": "Compose"
+                                    }
+                                },
+                                "else": {
+                                    "actions": {
+                                        "IsFreightRequest": {
+                                            "actions": {
+                                                "SetLogiaIndicatorFreightRequest": {
+                                                    "inputs": {
+                                                        "body": "\n  @{triggerBody()},\n  \"U_FlowIdent\": \"@{workflow()?['run']?['name']}\"\n",
+                                                        "cookie": "@body('GetCookie')",
+                                                        "headers": {
+                                                            "X-HTTP-Method-Override": "PATCH"
+                                                        },
+                                                        "method": "POST",
+                                                        "retryPolicy": {
+                                                            "count": 6,
+                                                            "interval": "PT20S",
+                                                            "type": "fixed"
+                                                        },
+                                                        "uri": "https://apsapb1sl.texas.dk:50000/b1s/v1/Orders(@{triggerOutputs()?['headers']?['OrderDocEntry']})"
+                                                    },
+                                                    "runtimeConfiguration": {
+                                                        "contentTransfer": {
+                                                            "transferMode": "Chunked"
+                                                        }
+                                                    },
+                                                    "type": "Http"
+                                                }
+                                            },
+                                            "else": {
+                                                "actions": {
+                                                    "SetLogiaIndicatorOrderRecieved": {
+                                                        "inputs": {
+                                                            "body": "\n@{triggerBody()},\n  \"U_FlowIdent\": \"@{workflow()?['run']?['name']}\"\n",
+                                                            "cookie": "@body('GetCookie')",
+                                                            "headers": {
+                                                                "X-HTTP-Method-Override": "PATCH"
+                                                            },
+                                                            "method": "POST",
+                                                            "retryPolicy": {
+                                                                "count": 6,
+                                                                "interval": "PT20S",
+                                                                "type": "fixed"
+                                                            },
+                                                            "uri": "https://apsapb1sl.texas.dk:50000/b1s/v1/Orders(@{triggerOutputs()?['headers']?['OrderDocEntry']})"
+                                                        },
+                                                        "runtimeConfiguration": {
+                                                            "contentTransfer": {
+                                                                "transferMode": "Chunked"
+                                                            }
+                                                        },
+                                                        "type": "Http"
+                                                    }
+                                                }
+                                            },
+                                            "expression": {
+                                                "and": [
+                                                    {
+                                                        "equals": [
+                                                            "@triggerOutputs()?['headers']?['FreightRequest']",
+                                                            "Y"
+                                                        ]
+                                                    }
+                                                ]
+                                            },
+                                            "type": "If"
+                                        }
+                                    }
+                                },
+                                "expression": {
+                                    "and": [
+                                        {
+                                            "equals": [
+                                                "@triggerOutputs()?['headers']?['status']",
+                                                "ERROR"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                "type": "If"
+                            }
+                        },
+                        "case": "FreightEstimateResponse"
+                    },
+                    "RetrieveOrder": {
+                        "actions": {
+                            "ChkErr2": {
+                                "actions": {
+                                    "Add_a_new_row__-Failure2": {
+                                        "inputs": {
+                                            "body": {
+                                                "cr65c_datenumber": "@formatDateTime(convertFromUtc(utcNow(), 'Romance Standard Time'), 'yyyyMMdd')",
+                                                "cr65c_documentnumber": "@{xpath(xml(outputs('BeautifyXML')), 'string(//*[local-name()=\"OrderNumber1\"])')}",
+                                                "cr65c_errordescription": "@{xpath(xml(body('RetrievePickOrder')), 'string(normalize-space(//*[local-name()=\"ErrorText\" and namespace-uri()=\"http://schemas.datacontract.org/2004/07/Logimatic.Interface.Plugin.Models.Base\"]))')}",
+                                                "cr65c_integrationtype": 6,
+                                                "cr65c_message": "@{outputs('BeautifyXML')}",
+                                                "cr65c_movementtype": 2,
+                                                "cr65c_status": 2,
+                                                "cr65c_transactiontype": "161350001"
+                                            },
+                                            "headers": {
+                                                "organization": "https://orgaff016f0.crm.dynamics.com",
+                                                "prefer": "return=representation,odata.include-annotations=*"
+                                            },
+                                            "host": {
+                                                "connection": {
+                                                    "referenceName": "commondataservice-4"
+                                                }
+                                            },
+                                            "method": "post",
+                                            "path": "/api/data/v9.1/@{encodeURIComponent(encodeURIComponent('cr65c_integrationmonitors'))}"
+                                        },
+                                        "runAfter": {
+                                            "SetLogiaIndicatorFailedRetrieval1": [
+                                                "SUCCEEDED"
+                                            ]
+                                        },
+                                        "type": "ApiConnection"
+                                    },
+                                    "SetLogiaIndicatorFailedRetrieval1": {
+                                        "inputs": {
+                                            "body": {
+                                                "U_BITP_LogiaIndicator": "N",
+                                                "U_LogiaAction": "O",
+                                                "U_LogiaErrTxt": "@{xpath(xml(body('RetrievePickOrder')), 'string(normalize-space(//*[local-name()=\"ErrorText\" and namespace-uri()=\"http://schemas.datacontract.org/2004/07/Logimatic.Interface.Plugin.Models.Base\"]))')}",
+                                                "U_LogiaFreightStatus": "@{concat('Error: ',convertFromUtc(utcNow(),'Romance Standard Time'))}"
+                                            },
+                                            "cookie": "@body('GetCookie')",
+                                            "headers": {
+                                                "X-HTTP-Method-Override": "PATCH"
+                                            },
+                                            "method": "POST",
+                                            "retryPolicy": {
+                                                "count": 4,
+                                                "interval": "PT50S",
+                                                "type": "fixed"
+                                            },
+                                            "uri": "https://apsapb1sl.texas.dk:50000/b1s/v1/Orders(@{triggerOutputs()?['headers']?['OrderNum']})"
+                                        },
+                                        "runtimeConfiguration": {
+                                            "contentTransfer": {
+                                                "transferMode": "Chunked"
+                                            }
+                                        },
+                                        "type": "Http"
+                                    }
+                                },
+                                "else": {
+                                    "actions": {
+                                        "CheckErrorOption2": {
+                                            "actions": {
+                                                "Add_a_new_row_-Failure2": {
+                                                    "inputs": {
+                                                        "body": {
+                                                            "cr65c_datenumber": "@formatDateTime(convertFromUtc(utcNow(), 'Romance Standard Time'), 'yyyyMMdd')",
+                                                            "cr65c_documentnumber": "@{xpath(xml(outputs('BeautifyXML')), 'string(//*[local-name()=\"OrderNumber1\"])')}",
+                                                            "cr65c_errordescription": "@{xpath(xml(body('RetrievePickOrder')), 'string(normalize-space(//*[local-name()=\"ErrorText\" and namespace-uri()=\"http://schemas.datacontract.org/2004/07/Logimatic.Interface.Plugin.Models.Base\"]))')}",
+                                                            "cr65c_integrationtype": 6,
+                                                            "cr65c_message": "@{outputs('BeautifyXML')}",
+                                                            "cr65c_movementtype": 2,
+                                                            "cr65c_status": 2,
+                                                            "cr65c_transactiontype": "161350001"
+                                                        },
+                                                        "headers": {
+                                                            "organization": "https://orgaff016f0.crm.dynamics.com",
+                                                            "prefer": "return=representation,odata.include-annotations=*"
+                                                        },
+                                                        "host": {
+                                                            "connection": {
+                                                                "referenceName": "commondataservice-4"
+                                                            }
+                                                        },
+                                                        "method": "post",
+                                                        "path": "/api/data/v9.1/@{encodeURIComponent(encodeURIComponent('cr65c_integrationmonitors'))}"
+                                                    },
+                                                    "runAfter": {
+                                                        "SetLogiaIndicatorFailedRetrieval": [
+                                                            "SUCCEEDED"
+                                                        ]
+                                                    },
+                                                    "type": "ApiConnection"
+                                                },
+                                                "SetLogiaIndicatorFailedRetrieval": {
+                                                    "inputs": {
+                                                        "body": {
+                                                            "U_BITP_LogiaIndicator": "N",
+                                                            "U_LogiaAction": "O",
+                                                            "U_LogiaErrTxt": "@{xpath(xml(body('RetrievePickOrder')), 'string(normalize-space(//*[local-name()=\"ErrorText\" and namespace-uri()=\"http://schemas.datacontract.org/2004/07/Logimatic.Interface.Plugin.Models.Base\"]))')}",
+                                                            "U_LogiaFreightStatus": "@{concat('Error: ',convertFromUtc(utcNow(),'Romance Standard Time'))}"
+                                                        },
+                                                        "cookie": "@body('GetCookie')",
+                                                        "headers": {
+                                                            "X-HTTP-Method-Override": "PATCH"
+                                                        },
+                                                        "method": "POST",
+                                                        "retryPolicy": {
+                                                            "count": 4,
+                                                            "interval": "PT50S",
+                                                            "type": "fixed"
+                                                        },
+                                                        "uri": "https://apsapb1sl.texas.dk:50000/b1s/v1/Orders(@{triggerOutputs()?['headers']?['OrderNum']})"
+                                                    },
+                                                    "runtimeConfiguration": {
+                                                        "contentTransfer": {
+                                                            "transferMode": "Chunked"
+                                                        }
+                                                    },
+                                                    "type": "Http"
+                                                }
+                                            },
+                                            "else": {
+                                                "actions": {
+                                                    "Add_a_new_row_-Success2": {
+                                                        "inputs": {
+                                                            "body": {
+                                                                "cr65c_datenumber": "@formatDateTime(convertFromUtc(utcNow(), 'Romance Standard Time'), 'yyyyMMdd')",
+                                                                "cr65c_documentnumber": "@{xpath(xml(outputs('BeautifyXML')), 'string(//*[local-name()=\"OrderNumber1\"])')}",
+                                                                "cr65c_integrationtype": 6,
+                                                                "cr65c_message": "@{outputs('BeautifyXML')}",
+                                                                "cr65c_movementtype": 2,
+                                                                "cr65c_status": 1,
+                                                                "cr65c_transactiontype": "161350001"
+                                                            },
+                                                            "headers": {
+                                                                "organization": "https://orgaff016f0.crm.dynamics.com",
+                                                                "prefer": "return=representation,odata.include-annotations=*"
+                                                            },
+                                                            "host": {
+                                                                "connection": {
+                                                                    "referenceName": "commondataservice-4"
+                                                                }
+                                                            },
+                                                            "method": "post",
+                                                            "path": "/api/data/v9.1/@{encodeURIComponent(encodeURIComponent('cr65c_integrationmonitors'))}"
+                                                        },
+                                                        "runAfter": {
+                                                            "SetLogiaIndicatorSuccessRetrieval": [
+                                                                "SUCCEEDED"
+                                                            ]
+                                                        },
+                                                        "type": "ApiConnection"
+                                                    },
+                                                    "SetLogiaIndicatorSuccessRetrieval": {
+                                                        "inputs": {
+                                                            "body": {
+                                                                "U_BITP_LogiaIndicator": "N",
+                                                                "U_LogiaAction": "O",
+                                                                "U_LogiaErrTxt": "",
+                                                                "U_LogiaFreightStatus": "@{concat('OK: ',convertFromUtc(utcNow(),'Romance Standard Time'))}"
+                                                            },
+                                                            "cookie": "@body('GetCookie')",
+                                                            "headers": {
+                                                                "X-HTTP-Method-Override": "PATCH"
+                                                            },
+                                                            "method": "POST",
+                                                            "retryPolicy": {
+                                                                "count": 4,
+                                                                "interval": "PT50S",
+                                                                "type": "fixed"
+                                                            },
+                                                            "uri": "https://apsapb1sl.texas.dk:50000/b1s/v1/Orders(@{triggerOutputs()?['headers']?['OrderNum']})"
+                                                        },
+                                                        "runtimeConfiguration": {
+                                                            "contentTransfer": {
+                                                                "transferMode": "Chunked"
+                                                            }
+                                                        },
+                                                        "type": "Http"
+                                                    }
+                                                }
+                                            },
+                                            "expression": {
+                                                "and": [
+                                                    {
+                                                        "equals": [
+                                                            "@outputs('CheckErrorText2')",
+                                                            "@toLower('true')"
+                                                        ]
+                                                    }
+                                                ]
+                                            },
+                                            "runAfter": {
+                                                "CheckErrorText2": [
+                                                    "SUCCEEDED"
+                                                ]
+                                            },
+                                            "type": "If"
+                                        },
+                                        "CheckErrorText2": {
+                                            "inputs": "@xpath(xml(body('RetrievePickOrder')), 'string(normalize-space(//*[local-name()=\"ErrorOccured\" and namespace-uri()=\"http://schemas.datacontract.org/2004/07/Logimatic.Interface.Plugin.Models.Base\"]))')",
+                                            "type": "Compose"
+                                        }
+                                    }
+                                },
+                                "expression": {
+                                    "and": [
+                                        {
+                                            "equals": [
+                                                "@outputs('RetrievePickOrder')?['statusCode']",
+                                                500
+                                            ]
+                                        }
+                                    ]
+                                },
+                                "runAfter": {
+                                    "RetrievePickOrder": [
+                                        "SUCCEEDED"
+                                    ]
+                                },
+                                "type": "If"
+                            },
+                            "RetrievePickOrder": {
+                                "inputs": {
+                                    "body": "@outputs('BeautifyXML')",
+                                    "headers": {
+                                        "Content-Type": "text/xml; charset=utf-8",
+                                        "SOAPAction": "@{variables('Resource')}"
+                                    },
+                                    "method": "POST",
+                                    "retryPolicy": {
+                                        "count": 6,
+                                        "interval": "PT20S",
+                                        "type": "fixed"
+                                    },
+                                    "uri": "http://77.243.35.82:5324/LOGIAERPInterface/"
+                                },
+                                "runAfter": {
+                                    "SetRetrieveOrder": [
+                                        "SUCCEEDED",
+                                        "FAILED",
+                                        "TIMEDOUT"
+                                    ]
+                                },
+                                "runtimeConfiguration": {
+                                    "contentTransfer": {
+                                        "transferMode": "Chunked"
+                                    }
+                                },
+                                "type": "Http"
+                            },
+                            "SetRetrieveOrder": {
+                                "inputs": {
+                                    "name": "Resource",
+                                    "value": "http://www.logiawms.dk/IERP/DeletePickingOrder"
+                                },
+                                "type": "SetVariable"
+                            }
+                        },
+                        "case": "RetrieveOrder"
+                    },
+                    "RetrievePO": {
+                        "actions": {
+                            "ChkErr4": {
+                                "actions": {
+                                    "Add_a_new_row__-Failure4": {
+                                        "inputs": {
+                                            "body": {
+                                                "cr65c_datenumber": "@formatDateTime(convertFromUtc(utcNow(), 'Romance Standard Time'), 'yyyyMMdd')",
+                                                "cr65c_documentnumber": "@{xpath(xml(outputs('BeautifyXML')), 'string(//*[local-name()=\"OrderNumber1\"])')}",
+                                                "cr65c_errordescription": "@{xpath(xml(body('RetrieveStoringOrder')), 'string(normalize-space(//*[local-name()=\"ErrorText\" and namespace-uri()=\"http://schemas.datacontract.org/2004/07/Logimatic.Interface.Plugin.Models.Base\"]))')}",
+                                                "cr65c_integrationtype": 7,
+                                                "cr65c_message": "@{outputs('BeautifyXML')}",
+                                                "cr65c_movementtype": 2,
+                                                "cr65c_status": 2,
+                                                "cr65c_transactiontype": "161350001"
+                                            },
+                                            "headers": {
+                                                "organization": "https://orgaff016f0.crm.dynamics.com",
+                                                "prefer": "return=representation,odata.include-annotations=*"
+                                            },
+                                            "host": {
+                                                "connection": {
+                                                    "referenceName": "commondataservice-4"
+                                                }
+                                            },
+                                            "method": "post",
+                                            "path": "/api/data/v9.1/@{encodeURIComponent(encodeURIComponent('cr65c_integrationmonitors'))}"
+                                        },
+                                        "runAfter": {
+                                            "SetLogiaIndicatorRetrievePOFailure2": [
+                                                "SUCCEEDED"
+                                            ]
+                                        },
+                                        "type": "ApiConnection"
+                                    },
+                                    "SetLogiaIndicatorRetrievePOFailure2": {
+                                        "inputs": {
+                                            "body": {
+                                                "U_BITP_LogiaIndicator": "N",
+                                                "U_LogiaAction": "O",
+                                                "U_LogiaErrTxt": "@{xpath(xml(body('RetrieveStoringOrder')), 'string(normalize-space(//*[local-name()=\"ErrorText\" and namespace-uri()=\"http://schemas.datacontract.org/2004/07/Logimatic.Interface.Plugin.Models.Base\"]))')}",
+                                                "U_LogiaFreightStatus": "@{concat('Error: ',convertFromUtc(utcNow(),'Romance Standard Time'))}"
+                                            },
+                                            "cookie": "@body('GetCookie')",
+                                            "headers": {
+                                                "X-HTTP-Method-Override": "PATCH"
+                                            },
+                                            "method": "POST",
+                                            "retryPolicy": {
+                                                "count": 4,
+                                                "interval": "PT50S",
+                                                "type": "fixed"
+                                            },
+                                            "uri": "https://apsapb1sl.texas.dk:50000/b1s/v1/PurchaseOrders(@{triggerOutputs()?['headers']?['OrderNum']})"
+                                        },
+                                        "runtimeConfiguration": {
+                                            "contentTransfer": {
+                                                "transferMode": "Chunked"
+                                            }
+                                        },
+                                        "type": "Http"
+                                    }
+                                },
+                                "else": {
+                                    "actions": {
+                                        "CheckErrorOption4": {
+                                            "actions": {
+                                                "Add_a_new_row__-Failure_4": {
+                                                    "inputs": {
+                                                        "body": {
+                                                            "cr65c_datenumber": "@formatDateTime(convertFromUtc(utcNow(), 'Romance Standard Time'), 'yyyyMMdd')",
+                                                            "cr65c_documentnumber": "@{xpath(xml(outputs('BeautifyXML')), 'string(//*[local-name()=\"OrderNumber1\"])')}",
+                                                            "cr65c_errordescription": "@{xpath(xml(body('RetrieveStoringOrder')), 'string(normalize-space(//*[local-name()=\"ErrorText\" and namespace-uri()=\"http://schemas.datacontract.org/2004/07/Logimatic.Interface.Plugin.Models.Base\"]))')}",
+                                                            "cr65c_integrationtype": 7,
+                                                            "cr65c_message": "@{outputs('BeautifyXML')}",
+                                                            "cr65c_movementtype": 2,
+                                                            "cr65c_status": 2,
+                                                            "cr65c_transactiontype": "161350001"
+                                                        },
+                                                        "headers": {
+                                                            "organization": "https://orgaff016f0.crm.dynamics.com",
+                                                            "prefer": "return=representation,odata.include-annotations=*"
+                                                        },
+                                                        "host": {
+                                                            "connection": {
+                                                                "referenceName": "commondataservice-4"
+                                                            }
+                                                        },
+                                                        "method": "post",
+                                                        "path": "/api/data/v9.1/@{encodeURIComponent(encodeURIComponent('cr65c_integrationmonitors'))}"
+                                                    },
+                                                    "runAfter": {
+                                                        "SetLogiaIndicatorRetrievePOFailure1": [
+                                                            "SUCCEEDED"
+                                                        ]
+                                                    },
+                                                    "type": "ApiConnection"
+                                                },
+                                                "SetLogiaIndicatorRetrievePOFailure1": {
+                                                    "inputs": {
+                                                        "body": {
+                                                            "U_BITP_LogiaIndicator": "N",
+                                                            "U_LogiaAction": "O",
+                                                            "U_LogiaErrTxt": "@{xpath(xml(body('RetrieveStoringOrder')), 'string(normalize-space(//*[local-name()=\"ErrorText\" and namespace-uri()=\"http://schemas.datacontract.org/2004/07/Logimatic.Interface.Plugin.Models.Base\"]))')}",
+                                                            "U_LogiaFreightStatus": "@{concat('Error: ',convertFromUtc(utcNow(),'Romance Standard Time'))}"
+                                                        },
+                                                        "cookie": "body('GetCookie')@{body('GetCookie')}",
+                                                        "headers": {
+                                                            "X-HTTP-Method-Override": "PATCH"
+                                                        },
+                                                        "method": "POST",
+                                                        "retryPolicy": {
+                                                            "count": 4,
+                                                            "interval": "PT50S",
+                                                            "type": "fixed"
+                                                        },
+                                                        "uri": "https://apsapb1sl.texas.dk:50000/b1s/v1/PurchaseOrders(@{triggerOutputs()?['headers']?['OrderNum']})"
+                                                    },
+                                                    "runtimeConfiguration": {
+                                                        "contentTransfer": {
+                                                            "transferMode": "Chunked"
+                                                        }
+                                                    },
+                                                    "type": "Http"
+                                                }
+                                            },
+                                            "else": {
+                                                "actions": {
+                                                    "Add_a_new_row_-Success4": {
+                                                        "inputs": {
+                                                            "body": {
+                                                                "cr65c_datenumber": "@formatDateTime(convertFromUtc(utcNow(), 'Romance Standard Time'), 'yyyyMMdd')",
+                                                                "cr65c_documentnumber": "@{xpath(xml(outputs('BeautifyXML')), 'string(//*[local-name()=\"OrderNumber1\"])')}",
+                                                                "cr65c_integrationtype": 7,
+                                                                "cr65c_message": "@{outputs('BeautifyXML')}",
+                                                                "cr65c_movementtype": 2,
+                                                                "cr65c_status": 1,
+                                                                "cr65c_transactiontype": "161350001"
+                                                            },
+                                                            "headers": {
+                                                                "organization": "https://orgaff016f0.crm.dynamics.com",
+                                                                "prefer": "return=representation,odata.include-annotations=*"
+                                                            },
+                                                            "host": {
+                                                                "connection": {
+                                                                    "referenceName": "commondataservice-4"
+                                                                }
+                                                            },
+                                                            "method": "post",
+                                                            "path": "/api/data/v9.1/@{encodeURIComponent(encodeURIComponent('cr65c_integrationmonitors'))}"
+                                                        },
+                                                        "runAfter": {
+                                                            "SetLogiaIndicatorRetrievePOSuccess": [
+                                                                "SUCCEEDED"
+                                                            ]
+                                                        },
+                                                        "type": "ApiConnection"
+                                                    },
+                                                    "SetLogiaIndicatorRetrievePOSuccess": {
+                                                        "inputs": {
+                                                            "body": {
+                                                                "U_BITP_LogiaIndicator": "N",
+                                                                "U_LogiaAction": "O",
+                                                                "U_LogiaErrTxt": "",
+                                                                "U_LogiaFreightStatus": "@{concat('OK: ',convertFromUtc(utcNow(),'Romance Standard Time'))}"
+                                                            },
+                                                            "cookie": "@body('GetCookie')",
+                                                            "headers": {
+                                                                "X-HTTP-Method-Override": "PATCH"
+                                                            },
+                                                            "method": "POST",
+                                                            "retryPolicy": {
+                                                                "count": 4,
+                                                                "interval": "PT50S",
+                                                                "type": "fixed"
+                                                            },
+                                                            "uri": "https://apsapb1sl.texas.dk:50000/b1s/v1/PurchaseOrders(@{triggerOutputs()?['headers']?['OrderNum']})"
+                                                        },
+                                                        "runtimeConfiguration": {
+                                                            "contentTransfer": {
+                                                                "transferMode": "Chunked"
+                                                            }
+                                                        },
+                                                        "type": "Http"
+                                                    }
+                                                }
+                                            },
+                                            "expression": {
+                                                "and": [
+                                                    {
+                                                        "equals": [
+                                                            "@outputs('CheckErrorText4')",
+                                                            "@toLower('true')"
+                                                        ]
+                                                    }
+                                                ]
+                                            },
+                                            "runAfter": {
+                                                "CheckErrorText4": [
+                                                    "SUCCEEDED"
+                                                ]
+                                            },
+                                            "type": "If"
+                                        },
+                                        "CheckErrorText4": {
+                                            "inputs": "@xpath(xml(body('RetrieveStoringOrder')), 'string(normalize-space(//*[local-name()=\"ErrorOccured\" and namespace-uri()=\"http://schemas.datacontract.org/2004/07/Logimatic.Interface.Plugin.Models.Base\"]))')",
+                                            "type": "Compose"
+                                        }
+                                    }
+                                },
+                                "expression": {
+                                    "and": [
+                                        {
+                                            "equals": [
+                                                "@outputs('RetrieveStoringOrder')?['statusCode']",
+                                                500
+                                            ]
+                                        }
+                                    ]
+                                },
+                                "runAfter": {
+                                    "RetrieveStoringOrder": [
+                                        "SUCCEEDED"
+                                    ]
+                                },
+                                "type": "If"
+                            },
+                            "RetrieveStoringOrder": {
+                                "inputs": {
+                                    "body": "@outputs('BeautifyXML')",
+                                    "headers": {
+                                        "Content-Type": "text/xml; charset=utf-8",
+                                        "SOAPAction": "@{variables('Resource')}"
+                                    },
+                                    "method": "POST",
+                                    "retryPolicy": {
+                                        "count": 6,
+                                        "interval": "PT20S",
+                                        "type": "fixed"
+                                    },
+                                    "uri": "http://77.243.35.82:5324/LOGIAERPInterface/"
+                                },
+                                "runAfter": {
+                                    "SetRetrievePO": [
+                                        "SUCCEEDED",
+                                        "TIMEDOUT",
+                                        "FAILED"
+                                    ]
+                                },
+                                "runtimeConfiguration": {
+                                    "contentTransfer": {
+                                        "transferMode": "Chunked"
+                                    }
+                                },
+                                "type": "Http"
+                            },
+                            "SetRetrievePO": {
+                                "inputs": {
+                                    "name": "Resource",
+                                    "value": "http://www.logiawms.dk/IERP/DeleteStoringOrder"
+                                },
+                                "type": "SetVariable"
+                            }
+                        },
+                        "case": "RetrievePO"
+                    },
+                    "SOAPResponseCarrierBlock": {
+                        "actions": {
+                            "Compose_copy_copy_copy_copy_copy": {
+                                "inputs": "@outputs('BeautifyXML')",
+                                "type": "Compose"
+                            }
+                        },
+                        "case": "SOAPResponseCarrierBlock"
+                    },
+                    "SOAPResponseInventoryCorrection": {
+                        "actions": {
+                            "Compose_copy_copy_copy_copy": {
+                                "inputs": "@outputs('BeautifyXML')",
+                                "type": "Compose"
+                            }
+                        },
+                        "case": "SOAPResponseInventoryCorrection"
+                    },
+                    "SOAPResponsePickingActivated": {
+                        "actions": {
+                            "Compose_copy_copy_copy": {
+                                "inputs": "@outputs('BeautifyXML')",
+                                "type": "Compose"
+                            }
+                        },
+                        "case": "SOAPResponsePickingActivated"
+                    },
+                    "SOAPResponsePickingDone": {
+                        "actions": {
+                            "CheckManInv": {
+                                "actions": {
+                                    "CheckPayID": {
+                                        "actions": {
+                                            "CheckOrderStat1": {
+                                                "actions": {
+                                                    "ResetLogiaIndicatorFinish1": {
+                                                        "inputs": {
+                                                            "body": {
+                                                                "U_BITP_LogiaIndicator": "F",
+                                                                "U_LogiaAction": "O"
+                                                            },
+                                                            "cookie": "@body('GetCookie')",
+                                                            "headers": {
+                                                                "X-HTTP-Method-Override": "PATCH"
+                                                            },
+                                                            "method": "POST",
+                                                            "retryPolicy": {
+                                                                "count": 4,
+                                                                "interval": "PT50S",
+                                                                "type": "fixed"
+                                                            },
+                                                            "uri": "https://apsapb1sl.texas.dk:50000/b1s/v1/Orders(@{triggerOutputs()?['headers']?['OrderDocEntry']})"
+                                                        },
+                                                        "runtimeConfiguration": {
+                                                            "contentTransfer": {
+                                                                "transferMode": "Chunked"
+                                                            }
+                                                        },
+                                                        "type": "Http"
+                                                    }
+                                                },
+                                                "else": {
+                                                    "actions": {
+                                                        "ResetLogiaIndicator1": {
+                                                            "inputs": {
+                                                                "body": {
+                                                                    "U_BITP_LogiaIndicator": "N",
+                                                                    "U_LogiaAction": "O"
+                                                                },
+                                                                "cookie": "@body('GetCookie')",
+                                                                "headers": {
+                                                                    "X-HTTP-Method-Override": "PATCH"
+                                                                },
+                                                                "method": "POST",
+                                                                "retryPolicy": {
+                                                                    "count": 4,
+                                                                    "interval": "PT50S",
+                                                                    "type": "fixed"
+                                                                },
+                                                                "uri": "https://apsapb1sl.texas.dk:50000/b1s/v1/Orders(@{triggerOutputs()?['headers']?['OrderDocEntry']})"
+                                                            },
+                                                            "runtimeConfiguration": {
+                                                                "contentTransfer": {
+                                                                    "transferMode": "Chunked"
+                                                                }
+                                                            },
+                                                            "type": "Http"
+                                                        }
+                                                    }
+                                                },
+                                                "expression": {
+                                                    "and": [
+                                                        {
+                                                            "equals": [
+                                                                "@Outputs('GetOrderStatus1')?['body']?['value'][0]?['DocStatus']",
+                                                                "C"
+                                                            ]
+                                                        }
+                                                    ]
+                                                },
+                                                "runAfter": {
+                                                    "GetOrderStatus1": [
+                                                        "SUCCEEDED"
+                                                    ]
+                                                },
+                                                "type": "If"
+                                            },
+                                            "GenerateARInvoice": {
+                                                "inputs": {
+                                                    "body": {
+                                                        "CardCode": "@triggerOutputs()?['headers']?['CardCode']",
+                                                        "DocumentAdditionalExpenses": [
+                                                            {
+                                                                "ExpenseCode": 1,
+                                                                "LineTotal": "@outputs('GetDeliveryLines')?['body']?['value'][0]?['LineTotal']"
+                                                            }
+                                                        ],
+                                                        "DocumentLines": "@body('SelectInvoiceInputs')"
+                                                    },
+                                                    "cookie": "@body('GetCookie')",
+                                                    "method": "POST",
+                                                    "retryPolicy": {
+                                                        "count": 4,
+                                                        "interval": "PT20S",
+                                                        "type": "fixed"
+                                                    },
+                                                    "uri": "https://apsapb1sl.texas.dk:50000/b1s/v1/Invoices"
+                                                },
+                                                "runAfter": {
+                                                    "SelectInvoiceInputs": [
+                                                        "SUCCEEDED"
+                                                    ]
+                                                },
+                                                "runtimeConfiguration": {
+                                                    "contentTransfer": {
+                                                        "transferMode": "Chunked"
+                                                    }
+                                                },
+                                                "type": "Http"
+                                            },
+                                            "GetDeliveryLines": {
+                                                "inputs": {
+                                                    "body": {
+                                                        "ParamList": "BaseEntry=  '@{triggerOutputs()?['headers']?['OrderDocEntry']}' "
+                                                    },
+                                                    "cookie": "@body('GetCookie')",
+                                                    "method": "POST",
+                                                    "uri": "https://apsapb1sl.texas.dk:50000/b1s/v1/SQLQueries('Z_GetDeliveries')/List"
+                                                },
+                                                "runAfter": {
+                                                    "CheckOrderStat1": [
+                                                        "SUCCEEDED",
+                                                        "SKIPPED",
+                                                        "FAILED"
+                                                    ]
+                                                },
+                                                "runtimeConfiguration": {
+                                                    "contentTransfer": {
+                                                        "transferMode": "Chunked"
+                                                    }
+                                                },
+                                                "type": "Http"
+                                            },
+                                            "GetOrderStatus1": {
+                                                "inputs": {
+                                                    "body": {
+                                                        "ParamList": "DocEntry=  '@{triggerOutputs()?['headers']?['OrderDocEntry']}' "
+                                                    },
+                                                    "cookie": "@body('GetCookie')",
+                                                    "method": "POST",
+                                                    "uri": "https://apsapb1sl.texas.dk:50000/b1s/v1/SQLQueries('Z_OrderStat')/List"
+                                                },
+                                                "runtimeConfiguration": {
+                                                    "contentTransfer": {
+                                                        "transferMode": "Chunked"
+                                                    }
+                                                },
+                                                "type": "Http"
+                                            },
+                                            "SelectInvoiceInputs": {
+                                                "inputs": {
+                                                    "from": "@outputs('GetDeliveryLines')?['body']?['value']",
+                                                    "select": {
+                                                        "BaseEntry": "@{item()?['DocEntry']}",
+                                                        "BaseLine": "@{item()?['LineNum']}",
+                                                        "BaseType": 15
+                                                    }
+                                                },
+                                                "runAfter": {
+                                                    "GetDeliveryLines": [
+                                                        "SUCCEEDED"
+                                                    ]
+                                                },
+                                                "type": "Select"
+                                            }
+                                        },
+                                        "else": {
+                                            "actions": {
+                                                "CheckOrderStat": {
+                                                    "actions": {
+                                                        "GenerateARInvoice1": {
+                                                            "inputs": {
+                                                                "body": {
+                                                                    "CardCode": "@triggerOutputs()?['headers']?['CardCode']",
+                                                                    "DocumentAdditionalExpenses": [
+                                                                        {
+                                                                            "ExpenseCode": 1,
+                                                                            "LineTotal": "@outputs('GetDeliveryLines1')?['body']?['value'][0]?['LineTotal']"
+                                                                        }
+                                                                    ],
+                                                                    "DocumentLines": "@body('SelectInvoiceInputs1')"
+                                                                },
+                                                                "cookie": "@body('GetCookie')",
+                                                                "method": "POST",
+                                                                "retryPolicy": {
+                                                                    "count": 4,
+                                                                    "interval": "PT20S",
+                                                                    "type": "fixed"
+                                                                },
+                                                                "uri": "https://apsapb1sl.texas.dk:50000/b1s/v1/Invoices"
+                                                            },
+                                                            "runAfter": {
+                                                                "SelectInvoiceInputs1": [
+                                                                    "SUCCEEDED"
+                                                                ]
+                                                            },
+                                                            "runtimeConfiguration": {
+                                                                "contentTransfer": {
+                                                                    "transferMode": "Chunked"
+                                                                }
+                                                            },
+                                                            "type": "Http"
+                                                        },
+                                                        "GetDeliveryLines1": {
+                                                            "inputs": {
+                                                                "body": {
+                                                                    "ParamList": "BaseEntry=  '@{triggerOutputs()?['headers']?['OrderDocEntry']}' "
+                                                                },
+                                                                "cookie": "@body('GetCookie')",
+                                                                "method": "POST",
+                                                                "uri": "https://apsapb1sl.texas.dk:50000/b1s/v1/SQLQueries('Z_GetDeliveries')/List"
+                                                            },
+                                                            "runtimeConfiguration": {
+                                                                "contentTransfer": {
+                                                                    "transferMode": "Chunked"
+                                                                }
+                                                            },
+                                                            "type": "Http"
+                                                        },
+                                                        "ResetLogiaIndicatorFinish": {
+                                                            "inputs": {
+                                                                "body": {
+                                                                    "U_BITP_LogiaIndicator": "F",
+                                                                    "U_LogiaAction": "O"
+                                                                },
+                                                                "cookie": "@body('GetCookie')",
+                                                                "headers": {
+                                                                    "X-HTTP-Method-Override": "PATCH"
+                                                                },
+                                                                "method": "POST",
+                                                                "retryPolicy": {
+                                                                    "count": 4,
+                                                                    "interval": "PT50S",
+                                                                    "type": "fixed"
+                                                                },
+                                                                "uri": "https://apsapb1sl.texas.dk:50000/b1s/v1/Orders(@{triggerOutputs()?['headers']?['OrderDocEntry']})"
+                                                            },
+                                                            "runAfter": {
+                                                                "GenerateARInvoice1": [
+                                                                    "SUCCEEDED"
+                                                                ]
+                                                            },
+                                                            "runtimeConfiguration": {
+                                                                "contentTransfer": {
+                                                                    "transferMode": "Chunked"
+                                                                }
+                                                            },
+                                                            "type": "Http"
+                                                        },
+                                                        "SelectInvoiceInputs1": {
+                                                            "inputs": {
+                                                                "from": "@outputs('GetDeliveryLines1')?['body']?['value']",
+                                                                "select": {
+                                                                    "BaseEntry": "@{item()?['DocEntry']}",
+                                                                    "BaseLine": "@{item()?['LineNum']}",
+                                                                    "BaseType": 15
+                                                                }
+                                                            },
+                                                            "runAfter": {
+                                                                "GetDeliveryLines1": [
+                                                                    "SUCCEEDED"
+                                                                ]
+                                                            },
+                                                            "type": "Select"
+                                                        }
+                                                    },
+                                                    "else": {
+                                                        "actions": {
+                                                            "ResetLogiaIndicator": {
+                                                                "inputs": {
+                                                                    "body": {
+                                                                        "U_BITP_LogiaIndicator": "N",
+                                                                        "U_LogiaAction": "O"
+                                                                    },
+                                                                    "cookie": "@body('GetCookie')",
+                                                                    "headers": {
+                                                                        "X-HTTP-Method-Override": "PATCH"
+                                                                    },
+                                                                    "method": "POST",
+                                                                    "retryPolicy": {
+                                                                        "count": 4,
+                                                                        "interval": "PT50S",
+                                                                        "type": "fixed"
+                                                                    },
+                                                                    "uri": "https://apsapb1sl.texas.dk:50000/b1s/v1/Orders(@{triggerOutputs()?['headers']?['OrderDocEntry']})"
+                                                                },
+                                                                "runtimeConfiguration": {
+                                                                    "contentTransfer": {
+                                                                        "transferMode": "Chunked"
+                                                                    }
+                                                                },
+                                                                "type": "Http"
+                                                            }
+                                                        }
+                                                    },
+                                                    "expression": {
+                                                        "and": [
+                                                            {
+                                                                "equals": [
+                                                                    "@Outputs('GetOrderStatus')?['body']?['value'][0]?['DocStatus']",
+                                                                    "C"
+                                                                ]
+                                                            }
+                                                        ]
+                                                    },
+                                                    "runAfter": {
+                                                        "GetOrderStatus": [
+                                                            "SUCCEEDED"
+                                                        ]
+                                                    },
+                                                    "type": "If"
+                                                },
+                                                "GetOrderStatus": {
+                                                    "inputs": {
+                                                        "body": {
+                                                            "ParamList": "DocEntry=  '@{triggerOutputs()?['headers']?['OrderDocEntry']}' "
+                                                        },
+                                                        "cookie": "@body('GetCookie')",
+                                                        "method": "POST",
+                                                        "uri": "https://apsapb1sl.texas.dk:50000/b1s/v1/SQLQueries('Z_OrderStat')/List"
+                                                    },
+                                                    "runtimeConfiguration": {
+                                                        "contentTransfer": {
+                                                            "transferMode": "Chunked"
+                                                        }
+                                                    },
+                                                    "type": "Http"
+                                                }
+                                            }
+                                        },
+                                        "expression": {
+                                            "and": [
+                                                {
+                                                    "equals": [
+                                                        "@empty(triggerOutputs()?['headers']?['PaymentID'])",
+                                                        "@true"
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        "type": "If"
+                                    },
+                                    "Compose_copy_copy": {
+                                        "inputs": "@outputs('BeautifyXML')",
+                                        "runAfter": {
+                                            "CheckPayID": [
+                                                "SUCCEEDED"
+                                            ]
+                                        },
+                                        "type": "Compose"
+                                    }
+                                },
+                                "else": {
+                                    "actions": {
+                                        "Compose_copy_copy_copy_1": {
+                                            "inputs": "@outputs('BeautifyXML')",
+                                            "type": "Compose"
+                                        }
+                                    }
+                                },
+                                "expression": {
+                                    "and": [
+                                        {
+                                            "equals": [
+                                                "@triggerOutputs()?['headers']?['ManInv']",
+                                                "N"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                "type": "If"
+                            }
+                        },
+                        "case": "SOAPResponsePickingOrderDoneResponse"
+                    },
+                    "SOAPResponsePriority": {
+                        "actions": {
+                            "Compose_copy": {
+                                "inputs": "@outputs('BeautifyXML')",
+                                "type": "Compose"
+                            }
+                        },
+                        "case": "SOAPResponsePriority"
+                    },
+                    "SOAPResponseStoring": {
+                        "actions": {
+                            "Compose": {
+                                "inputs": "@outputs('BeautifyXML')",
+                                "type": "Compose"
+                            }
+                        },
+                        "case": "SOAPResponseStoring"
+                    },
+                    "SOAPResponseStoringActivated": {
+                        "actions": {
+                            "Compose_copy_copy_copy_copy_copy_copy": {
+                                "inputs": "@outputs('BeautifyXML')",
+                                "type": "Compose"
+                            }
+                        },
+                        "case": "SOAPResponseStoringActivated"
+                    }
+                },
+                "default": {
+                    "actions": {}
+                },
+                "expression": "@triggerOutputs()?['headers']?['CallType']",
+                "runAfter": {
+                    "GetCookie": [
+                        "SUCCEEDED"
+                    ]
+                },
+                "type": "Switch"
+            },
+            "CheckNoJSON": {
+                "actions": {},
+                "else": {
+                    "actions": {
+                        "BeautifyXML": {
+                            "inputs": "@xml(triggerBody())",
+                            "type": "Compose"
+                        }
+                    }
+                },
+                "expression": {
+                    "and": [
+                        {
+                            "equals": [
+                                "@triggerOutputs()?['headers']?['CallType']",
+                                "FreightEstimateResponse"
+                            ]
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "Logo": [
+                        "SUCCEEDED"
+                    ]
+                },
+                "type": "If"
+            },
+            "GetCookie": {
+                "inputs": {
+                    "method": "POST",
+                    "uri": "https://texaslogiaintegrationenahanced.azurewebsites.net:443/api/SetSLCookie/triggers/When_a_HTTP_request_is_received/invoke?api-version=2022-05-01&sp=%2Ftriggers%2FWhen_a_HTTP_request_is_received%2Frun&sv=1.0&sig=DmxNOFnM2Al8hGMTiC6QAwP6dpLYIqtublkcnOEoxNw"
+                },
+                "runAfter": {
+                    "CheckNoJSON": [
+                        "SUCCEEDED"
+                    ]
+                },
+                "runtimeConfiguration": {
+                    "contentTransfer": {
+                        "transferMode": "Chunked"
+                    }
+                },
+                "type": "Http"
+            },
+            "Logo": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "Logo",
+                            "type": "string",
+                            "value": "<div style=\"background-color: navy; display: inline-block; padding: 10px;\">\n  <img src=\"https://cumulusservice.sharepoint.com/sites/Microsoft-Share/Shared%20Documents/Capture.PNG\" \n       alt=\"Price Tag Icon Business Icon Price Icon, PNG, 1214x1234px, Price Tag Icon, Azure, Blue, Business Icon, Cobalt Blue Download Free\" \n       width=\"200\" \n       height=\"80\" \n       style=\"float: left; padding-right: 30px;\">\n</div>"
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "Resource": [
+                        "SUCCEEDED"
+                    ]
+                },
+                "type": "InitializeVariable"
+            },
+            "Resource": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "Resource",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "runAfter": {},
+                "type": "InitializeVariable"
+            }
+        },
+        "contentVersion": "1.0.0.0",
+        "outputs": {},
+        "triggers": {
+            "When_a_HTTP_request_is_received": {
+                "kind": "Http",
+                "operationOptions": "EnableSchemaValidation",
+                "type": "Request"
+            }
+        }
+    },
+    "kind": "Stateful"
+}

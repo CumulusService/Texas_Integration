@@ -1,0 +1,137 @@
+{
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "For_each": {
+                "actions": {
+                    "AppendMsgArray": {
+                        "inputs": {
+                            "name": "MessageArray",
+                            "value": "@outputs('ComposeSLInput')"
+                        },
+                        "runAfter": {
+                            "ComposeSLInput": [
+                                "SUCCEEDED"
+                            ]
+                        },
+                        "type": "AppendToStringVariable"
+                    },
+                    "ComposeSLInput": {
+                        "inputs": "@{variables('SetBatchHeader')}\nPOST /b1s/v1/ReturnRequest(@{item()?['DocEntry']})\nContent-Type: application/json\nX-HTTP-Method-Override: PATCH\n\n    {\n        \"U_BITP_LogiaIndicator\": \"T\",\n         \"U_FlowIdent\": \"@{workflow()?['run']?['name']}\"\n     }\n\n@{variables('SetBatchFooter')}\n\n",
+                        "type": "Compose"
+                    }
+                },
+                "foreach": "@triggerBody()",
+                "runAfter": {
+                    "SetBatchFooter": [
+                        "SUCCEEDED"
+                    ]
+                },
+                "type": "Foreach"
+            },
+            "GetCompleteMessage": {
+                "inputs": "--batch_boundary\n@{variables('MessageArray')}",
+                "runAfter": {
+                    "For_each": [
+                        "SUCCEEDED"
+                    ]
+                },
+                "type": "Compose"
+            },
+            "GetCookie": {
+                "inputs": {
+                    "method": "POST",
+                    "uri": "https://texaslogiaintegrationenahanced.azurewebsites.net:443/api/SetSLCookie/triggers/When_a_HTTP_request_is_received/invoke?api-version=2022-05-01&sp=%2Ftriggers%2FWhen_a_HTTP_request_is_received%2Frun&sv=1.0&sig=DmxNOFnM2Al8hGMTiC6QAwP6dpLYIqtublkcnOEoxNw"
+                },
+                "runAfter": {
+                    "GetCompleteMessage": [
+                        "SUCCEEDED"
+                    ]
+                },
+                "runtimeConfiguration": {
+                    "contentTransfer": {
+                        "transferMode": "Chunked"
+                    }
+                },
+                "type": "Http"
+            },
+            "MessageArray": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "MessageArray",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "runAfter": {},
+                "type": "InitializeVariable"
+            },
+            "PatchOrders": {
+                "inputs": {
+                    "body": "@outputs('GetCompleteMessage')",
+                    "cookie": "@body('GetCookie')",
+                    "headers": {
+                        "Content-Type": "multipart/mixed;boundary=batch_boundary"
+                    },
+                    "method": "POST",
+                    "uri": "https://apsapb1sl.texas.dk:50000/b1s/v1/$batch"
+                },
+                "runAfter": {
+                    "GetCookie": [
+                        "SUCCEEDED"
+                    ]
+                },
+                "runtimeConfiguration": {
+                    "contentTransfer": {
+                        "transferMode": "Chunked"
+                    }
+                },
+                "type": "Http"
+            },
+            "SetBatchFooter": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "SetBatchFooter",
+                            "type": "string",
+                            "value": "--batch_boundary--"
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "SetBatchHeader": [
+                        "SUCCEEDED"
+                    ]
+                },
+                "type": "InitializeVariable"
+            },
+            "SetBatchHeader": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "SetBatchHeader",
+                            "type": "string",
+                            "value": "Content-Type: application/http\nContent-Transfer-Encoding: binary\nX-HTTP-Method-Override: PATCH\n\n"
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "MessageArray": [
+                        "SUCCEEDED"
+                    ]
+                },
+                "type": "InitializeVariable"
+            }
+        },
+        "contentVersion": "1.0.0.0",
+        "outputs": {},
+        "triggers": {
+            "When_a_HTTP_request_is_received": {
+                "kind": "Http",
+                "type": "Request"
+            }
+        }
+    },
+    "kind": "Stateful"
+}

@@ -1,0 +1,145 @@
+{
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "Compose": {
+                "inputs": "@json(base64ToString(outputs('Get_file_content')?['body']?['$content']))",
+                "runAfter": {
+                    "HTTP": [
+                        "SUCCEEDED"
+                    ]
+                },
+                "type": "Compose"
+            },
+            "Compose_1": {
+                "inputs": "@addToTime(outputs('Compose')?['StartTime'],4,'Minute')",
+                "runAfter": {
+                    "Compose": [
+                        "SUCCEEDED"
+                    ]
+                },
+                "type": "Compose"
+            },
+            "Condition": {
+                "actions": {
+                    "Compose_2": {
+                        "inputs": "@formatDateTime(convertFromUtc(utcNow(),'Romance Standard Time'),'yyyy-MM-ddTHH:mm')",
+                        "type": "Compose"
+                    },
+                    "Compose_3": {
+                        "inputs": "@addToTime(outputs('Compose')?['StartTime'],4,'Minute','yyyy-MM-ddTHH:mm')",
+                        "runAfter": {
+                            "Compose_2": [
+                                "SUCCEEDED"
+                            ]
+                        },
+                        "type": "Compose"
+                    }
+                },
+                "else": {
+                    "actions": {
+                        "Compose_2_copy": {
+                            "inputs": "@formatDateTime(convertFromUtc(utcNow(),'Romance Standard Time'),'yyyy-MM-ddTHH:mm')",
+                            "type": "Compose"
+                        },
+                        "Compose_3_copy": {
+                            "inputs": "@addToTime(outputs('Compose')?['StartTime'],4,'Minute','yyyy-MM-ddTHH:mm')",
+                            "runAfter": {
+                                "Compose_2_copy": [
+                                    "SUCCEEDED"
+                                ]
+                            },
+                            "type": "Compose"
+                        }
+                    }
+                },
+                "expression": {
+                    "and": [
+                        {
+                            "greaterOrEquals": [
+                                "@formatDateTime(convertFromUtc(utcNow(),'Romance Standard Time'),'yyyy-MM-ddTHH:mm')",
+                                "@addToTime(outputs('Compose')?['StartTime'],4,'Minute','yyyy-MM-ddTHH:mm')"
+                            ]
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "Compose_1": [
+                        "SUCCEEDED"
+                    ]
+                },
+                "type": "If"
+            },
+            "Execute_a_Oracle_query": {
+                "inputs": {
+                    "body": {
+                        "query": "select * from v_ext_sap_stock_balance"
+                    },
+                    "host": {
+                        "connection": {
+                            "referenceName": "oracle-5"
+                        }
+                    },
+                    "method": "post",
+                    "path": "/datasets/default/query/oracle"
+                },
+                "runAfter": {
+                    "Condition": [
+                        "SUCCEEDED"
+                    ]
+                },
+                "type": "ApiConnection"
+            },
+            "Get_file_content": {
+                "inputs": {
+                    "host": {
+                        "connection": {
+                            "referenceName": "onedriveforbusiness-1"
+                        }
+                    },
+                    "method": "get",
+                    "path": "/datasets/default/files/@{encodeURIComponent(encodeURIComponent('b!nNXRSTfmvEiWGF9ZziG8IUUmo4R2CTpPjjpaNC3Fh-u52oRE5qTMTLEkBmnMBZ_V.015QGSQMLDU7RY2KDZRVEKAOMFU25ZW7AI'))}/content",
+                    "queries": {
+                        "inferContentType": true
+                    }
+                },
+                "metadata": {
+                    "b!nNXRSTfmvEiWGF9ZziG8IUUmo4R2CTpPjjpaNC3Fh-u52oRE5qTMTLEkBmnMBZ_V.015QGSQMLDU7RY2KDZRVEKAOMFU25ZW7AI": "/TexasServiceLayerCookie/Cookie.json"
+                },
+                "runAfter": {},
+                "type": "ApiConnection"
+            },
+            "HTTP": {
+                "inputs": {
+                    "body": {
+                        "CompanyDB": "Sandkasse2",
+                        "Password": "B1CloudUser@",
+                        "UserName": "B1CU"
+                    },
+                    "method": "POST",
+                    "uri": "https://apsapb1sl.texas.dk:50000/b1s/v1/Login"
+                },
+                "runAfter": {
+                    "Get_file_content": [
+                        "SUCCEEDED"
+                    ]
+                },
+                "runtimeConfiguration": {
+                    "contentTransfer": {
+                        "transferMode": "Chunked"
+                    }
+                },
+                "type": "Http"
+            }
+        },
+        "contentVersion": "1.0.0.0",
+        "outputs": {},
+        "triggers": {
+            "When_a_HTTP_request_is_received": {
+                "kind": "Http",
+                "type": "Request"
+            }
+        }
+    },
+    "kind": "Stateful"
+}

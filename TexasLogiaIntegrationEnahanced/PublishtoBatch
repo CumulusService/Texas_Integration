@@ -1,0 +1,46 @@
+{
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "Send_to_batch": {
+                "inputs": {
+                    "batchName": "InboundB1i",
+                    "content": "@triggerBody()?['contentData']",
+                    "host": {
+                        "triggerName": "BatchTrigger",
+                        "workflow": {
+                            "id": "ProcessFreightRequestsLogia"
+                        }
+                    }
+                },
+                "runAfter": {},
+                "type": "SendToBatch"
+            }
+        },
+        "contentVersion": "1.0.0.0",
+        "outputs": {},
+        "triggers": {
+            "When_a_message_is_received_in_a_queue_(auto-complete)": {
+                "inputs": {
+                    "host": {
+                        "connection": {
+                            "referenceName": "servicebus"
+                        }
+                    },
+                    "method": "get",
+                    "path": "/@{encodeURIComponent(encodeURIComponent(parameters('Queue')))}/messages/head",
+                    "queries": {
+                        "queueType": "Main"
+                    }
+                },
+                "recurrence": {
+                    "frequency": "Second",
+                    "interval": 1,
+                    "timeZone": "Romance Standard Time"
+                },
+                "type": "ApiConnection"
+            }
+        }
+    },
+    "kind": "Stateful"
+}

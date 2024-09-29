@@ -1,0 +1,255 @@
+{
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "CheckValidDates": {
+                "inputs": {
+                    "headers": {
+                        "Authorization": "Basic eyJVc2VyTmFtZSI6IkFUUENIIiwiQ29tcGFueURCIjoiU2FuZGthc3NlMiJ9OlRleFNlY3VyMXR5QVRQQA==",
+                        "Prefer": "odata.maxpagesize=0"
+                    },
+                    "method": "GET",
+                    "retryPolicy": {
+                        "count": 4,
+                        "interval": "PT10S",
+                        "type": "fixed"
+                    },
+                    "uri": "https://apsapb1sl.texas.dk:50000/b1s/v1/view.svc/OrdersLinesforShipB1SLQuery"
+                },
+                "runAfter": {
+                    "SetBatchFooter": [
+                        "SUCCEEDED"
+                    ]
+                },
+                "runtimeConfiguration": {
+                    "contentTransfer": {
+                        "transferMode": "Chunked"
+                    }
+                },
+                "type": "Http"
+            },
+            "Condition": {
+                "actions": {
+                    "Terminate": {
+                        "inputs": {
+                            "runStatus": "Cancelled"
+                        },
+                        "type": "Terminate"
+                    }
+                },
+                "else": {
+                    "actions": {
+                        "For_each": {
+                            "actions": {
+                                "AppendMsgArray": {
+                                    "inputs": {
+                                        "name": "MessageArray",
+                                        "value": "@outputs('ComposeSLInput')"
+                                    },
+                                    "runAfter": {
+                                        "ComposeSLInput": [
+                                            "SUCCEEDED"
+                                        ]
+                                    },
+                                    "type": "AppendToStringVariable"
+                                },
+                                "ComposeSLInput": {
+                                    "inputs": "@{variables('SetBatchHeader')}\nPOST /b1s/v1/Orders(@{int(items('For_each')?['DocEntry'])})\nContent-Type: application/json\nX-HTTP-Method-Override: PATCH\n\n{\n  \"U_BITP_LogiaIndicator\": \"N\",\n   \"U_LogiaAction\": \"R\",\n    \"U_EligforShip\": \"Y\"\n  \"DocumentLines\": @{body('ReselectLines')},\n  \"U_FlowIdent\": \"@{workflow()?['run']?['name']}\"\n}\n\n@{variables('SetBatchFooter')}\n\n",
+                                    "runAfter": {
+                                        "ReselectLines": [
+                                            "SUCCEEDED"
+                                        ]
+                                    },
+                                    "type": "Compose"
+                                },
+                                "FilterOriginalOutput": {
+                                    "inputs": {
+                                        "from": "@outputs('CheckValidDates')?['body']?['value']",
+                                        "where": "@equals(int(item()?['DocEntry']),int(items('For_each')?['DocEntry']))"
+                                    },
+                                    "type": "Query"
+                                },
+                                "ReselectLines": {
+                                    "inputs": {
+                                        "from": "@body('FilterOriginalOutput')",
+                                        "select": {
+                                            "LineNum": "@{item()?['LineNum']}",
+                                            "U_IsShipDay": "Y"
+                                        }
+                                    },
+                                    "runAfter": {
+                                        "FilterOriginalOutput": [
+                                            "SUCCEEDED"
+                                        ]
+                                    },
+                                    "type": "Select"
+                                }
+                            },
+                            "foreach": "@outputs('UnionDocEntry')",
+                            "runAfter": {
+                                "UnionDocEntry": [
+                                    "SUCCEEDED"
+                                ]
+                            },
+                            "type": "Foreach"
+                        },
+                        "GetCompleteMessage": {
+                            "inputs": "--batch_boundary\n@{variables('MessageArray')}",
+                            "runAfter": {
+                                "For_each": [
+                                    "SUCCEEDED"
+                                ]
+                            },
+                            "type": "Compose"
+                        },
+                        "PatchOrders": {
+                            "inputs": {
+                                "body": "@outputs('GetCompleteMessage')",
+                                "headers": {
+                                    "Authorization": "Basic eyJVc2VyTmFtZSI6IkFUUENIIiwiQ29tcGFueURCIjoiU2FuZGthc3NlMiJ9OlRleFNlY3VyMXR5QVRQQA==",
+                                    "Content-Type": "multipart/mixed;boundary=batch_boundary"
+                                },
+                                "method": "POST",
+                                "retryPolicy": {
+                                    "count": 4,
+                                    "interval": "PT10S",
+                                    "type": "fixed"
+                                },
+                                "uri": "https://apsapb1sl.texas.dk:50000/b1s/v1/$batch"
+                            },
+                            "runAfter": {
+                                "GetCompleteMessage": [
+                                    "SUCCEEDED"
+                                ]
+                            },
+                            "runtimeConfiguration": {
+                                "contentTransfer": {
+                                    "transferMode": "Chunked"
+                                }
+                            },
+                            "type": "Http"
+                        },
+                        "SelectDocEntry": {
+                            "inputs": {
+                                "from": "@outputs('CheckValidDates')?['body']?['value']",
+                                "select": {
+                                    "DocEntry": "@{item()?['DocEntry']}"
+                                }
+                            },
+                            "type": "Select"
+                        },
+                        "UnionDocEntry": {
+                            "inputs": "@union(body('SelectDocEntry'),body('SelectDocEntry'))",
+                            "runAfter": {
+                                "SelectDocEntry": [
+                                    "SUCCEEDED"
+                                ]
+                            },
+                            "type": "Compose"
+                        }
+                    }
+                },
+                "expression": {
+                    "and": [
+                        {
+                            "equals": [
+                                "@length(outputs('CheckValidDates')?['body']?['value'])",
+                                0
+                            ]
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "CheckValidDates": [
+                        "SUCCEEDED"
+                    ]
+                },
+                "type": "If"
+            },
+            "MessageArray": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "MessageArray",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "runAfter": {},
+                "type": "InitializeVariable"
+            },
+            "SetBatchFooter": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "SetBatchFooter",
+                            "type": "string",
+                            "value": "--batch_boundary--"
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "SetBatchHeader": [
+                        "SUCCEEDED"
+                    ]
+                },
+                "type": "InitializeVariable"
+            },
+            "SetBatchHeader": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "SetBatchHeader",
+                            "type": "string",
+                            "value": "Content-Type: application/http\nContent-Transfer-Encoding: binary\nX-HTTP-Method-Override: PATCH\n"
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "MessageArray": [
+                        "SUCCEEDED"
+                    ]
+                },
+                "type": "InitializeVariable"
+            }
+        },
+        "contentVersion": "1.0.0.0",
+        "outputs": {},
+        "triggers": {
+            "Recurrence": {
+                "recurrence": {
+                    "frequency": "Day",
+                    "interval": 1,
+                    "schedule": {
+                        "hours": [
+                            "8",
+                            "7",
+                            "9",
+                            "10",
+                            "11",
+                            "12",
+                            "13",
+                            "14",
+                            "15",
+                            "16",
+                            "17",
+                            "18",
+                            "19",
+                            "20",
+                            "21",
+                            "22",
+                            "23",
+                            "6"
+                        ],
+                        "minutes": [
+                            0
+                        ]
+                    },
+                    "timeZone": "Romance Standard Time"
+                },
+                "type": "Recurrence"
+            }
+        }
+    },
+    "kind": "Stateful"
+}

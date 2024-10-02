@@ -41,18 +41,22 @@ Feel free to explore the repository and reach out if you have any questions.
 
 ## Function App 1: [Name]
 
-- **Purpose:** Brief description of what this Function App does.
+- **Purpose:** 
 - **Features:**
-  - Feature 1
-  - Feature 2
+
 - **Notes:** Any additional information.
 
 ## Function App 2: [Name]
 
-- **Purpose:** Brief description of what this Function App does.
+- **Purpose:** 
 - **Features:**
-  - Feature 1
-  - Feature 2
-- **Notes:** Any additional information.
 
-<!-- Continue for each Function App -->
+## Function App 3: [Name]
+
+- **Purpose:** 
+- **Features:**
+
+## Function App 4: [Name]
+
+- **Purpose:** 
+- **Features:**
